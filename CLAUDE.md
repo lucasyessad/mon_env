@@ -66,6 +66,10 @@ généré pour les logs orchestrateur.
   (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad), `-OverrideTo`/`-OverrideCc`, `-KeyValues`.
   Le sujet/expéditeur/SMTP/template viennent du JSON. Sinon, **repli** sur `Send-Mail` interne.
 - Le PO est **optionnel** : ≥1 PO actif → désignation Dev + PO ; sinon mode **Dev seul**.
+- Le mail d'**annonce** inclut deux tableaux (via `-SectionsInline` pour le moteur,
+  `Build-TableHtml` pour le repli) : l'**état des compteurs** de tous les membres de la
+  squad (`Get-CompteursRows`, groupé par rôle) et la **prévision des 3 prochaines
+  semaines** (`Get-PrevisionRows`, simulation de l'algo sur copies en mémoire).
 
 ### Excel = données métier seulement
 Feuilles `Membres`, `Congés`, `Historique`, `Log`. **Plus de feuille Paramètres lue**,
