@@ -45,17 +45,31 @@ généré pour les logs orchestrateur.
 
 ### Configuration unique (`config.psd1`)
 - Un seul fichier `.psd1` (PowerShell Data File), chargé par `Import-PowerShellDataFile`.
-- Contient le SMTP global, les sujets de mail, les destinataires de l'orchestrateur, et
-  la liste `Squads` (un bloc par squad : `Nom`, `Classeur`, expéditeur, responsables, copies).
-- **Plus de fusion global/local** : une squad peut surcharger un sujet en ajoutant la clé
-  dans son bloc. Clés obligatoires validées par `$script:ClesGlobales` et `$script:ClesSquad`.
+- **Adresses simplifiées** : UN expéditeur global (`Expediteur`/`NomExpediteur`) pour tous
+  les mails, et UNE liste `EmailsAdmin` pour toutes les alertes (désignation impossible +
+  récap orchestrateur). Plus d'expéditeur ni de responsables par squad.
+- Contient aussi le SMTP, les sujets de mail, et la liste `Squads` (par squad :
+  `Nom`, `Classeur` obligatoires ; `EmailsCopieSquad` optionnel).
+- Clés obligatoires validées par `$script:ClesGlobales` et `$script:ClesSquad`.
+- **Chemins configurables** (optionnels) : `DossierSquads` (base des `Classeur` relatifs),
+  `DossierLogs`, `Template`. Résolus via `Resolve-Chemin` (absolu/UNC tel quel, relatif
+  contre `DossierRacine`). Un `Classeur` peut être absolu → squad dans n'importe quel partage.
+- **Plus de fusion global/local** : une squad peut surcharger un sujet en ajoutant la clé.
 - La liste des squads vient de la config (plus de scan de dossiers `_`).
+- `-Action NouvelleSquad` **écrit automatiquement** le bloc squad dans `config.psd1`
+  (insertion après `Squads = @(`, sauvegarde `.bak`, vérification du rechargement).
 
 ### Excel = données métier seulement
 Feuilles `Membres`, `Congés`, `Historique`, `Log`. **Plus de feuille Paramètres lue**,
 **plus de VBA**. Les congés se saisissent directement (feuille Congés, en-tête ligne 1,
-données dès la ligne 2). Colonnes Membres/Historique/Log inchangées par rapport à
-l'historique du projet — **ne pas les casser** (compat avec les classeurs existants).
+données dès la ligne 2). Le template impose des **listes déroulantes** (data validation) :
+Rôle = Dev/PO, Actif = Oui/Non, et Congés!Membre = noms de la feuille Membres.
+Lecture tolérante : `ConvertTo-DateOuNull` (dates multi-cultures, sinon `$null`+WARN) et
+`ConvertTo-IntOuZero` ; lectures encadrées par `@(...)` (feuilles vides OK sous StrictMode).
+
+### PO optionnel (règle d'association)
+S'il existe ≥1 PO actif : désignation **Dev + PO**. Sinon : mode **Dev seul** (désignation
+et mail au Dev uniquement). `ResponsablePO`/PO ne sont jamais obligatoires.
 
 ### Algorithme de désignation (`Get-DesignePourRole`, inchangé)
 1. Candidats = membres actifs (`Actif = Oui`) du rôle.
