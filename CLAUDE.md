@@ -52,7 +52,7 @@ généré pour les logs orchestrateur.
 - Clés du **moteur** : `SmtpServer`, `Port`, `From`, `To`, `TemplatePath` (= `${TEMPLATE_PATH}`,
   fourni par le suivi), `Subject`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `Environnement`,
   `EquipeNom`. Clés du **suivi** : `EmailsAdmin`, `MoteurMail`, `Template`, `DossierSquads`,
-  `DossierLogs`, `Squads` (par squad : `Nom`, `Classeur` obligatoires ; `EmailsCopieSquad`).
+  `DossierLogs`, `Squads` (par squad : `Nom`, `Classeur` — c'est tout ; le reste est dans l'Excel).
 - Clés obligatoires validées par `$script:ClesGlobales` / `$script:ClesSquad`.
 - **Chemins configurables** via `Resolve-Chemin` (absolu/UNC tel quel, relatif contre
   `DossierRacine`). Un `Classeur` peut être absolu → squad dans n'importe quel partage.
@@ -66,23 +66,27 @@ généré pour les logs orchestrateur.
   (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad), `-OverrideTo`/`-OverrideCc`, `-KeyValues`.
   Le sujet/expéditeur/SMTP/template viennent du JSON. **Pas de repli** : si `MoteurMail`
   est introuvable, l'envoi échoue explicitement (le moteur est une dépendance requise).
-- Le PO est **optionnel** : ≥1 PO actif → désignation Dev + PO ; sinon mode **Dev seul**.
-- Le mail d'**annonce** inclut deux tableaux (via `-SectionsInline` pour le moteur,
-  `Build-TableHtml` pour le repli) : l'**état des compteurs** de tous les membres de la
-  squad (`Get-CompteursRows`, groupé par rôle) et la **prévision des 3 prochaines
-  semaines** (`Get-PrevisionRows`, simulation de l'algo sur copies en mémoire).
+- Le mail d'**annonce** inclut, via `-SectionsInline` : **un tableau de compteurs par
+  rôle** (`Get-CompteursRows <Role>`) et la **prévision des 3 prochaines semaines**
+  (`Get-PrevisionRows`, 1 colonne par rôle, simulation de l'algo sur copies en mémoire).
 
-### Excel = données métier seulement
-Feuilles `Membres`, `Congés`, `Historique`, `Log`. **Plus de feuille Paramètres lue**,
-**plus de VBA**. Les congés se saisissent directement (feuille Congés, en-tête ligne 1,
-données dès la ligne 2). Le template impose des **listes déroulantes** (data validation) :
-Rôle = Dev/PO, Actif = Oui/Non, et Congés!Membre = noms de la feuille Membres.
-Lecture tolérante : `ConvertTo-DateOuNull` (dates multi-cultures, sinon `$null`+WARN) et
-`ConvertTo-IntOuZero` ; lectures encadrées par `@(...)` (feuilles vides OK sous StrictMode).
+### Excel = données métier + config par squad
+Feuilles `Parametres`, `Membres`, `Congés`, `Historique`, `Log`. **Plus de VBA.**
+- **`Parametres`** : config self-service de la squad. Colonne A = **rôles à désigner**
+  dans l'ordre (`RolesADesigner`) ; cette liste alimente la liste déroulante `Rôle` de
+  `Membres`. Colonnes C/D = paires **clé/valeur** extensibles (lues dans `$paramKV`),
+  ex. `EmailsCopieSquad`.
+- **`Historique`** au **format long** : 1 ligne par rôle désigné
+  (`SemaineLundi, Role, Nom, Email, DateAnnonce, DateRappel, Statut, Note`).
+- Listes déroulantes : `Rôle` = `Parametres!$A$2:$A$50`, `Actif` = Oui/Non,
+  `Congés!Membre` = noms de `Membres`.
+- Lecture tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures `@(...)`.
 
-### PO optionnel (règle d'association)
-S'il existe ≥1 PO actif : désignation **Dev + PO**. Sinon : mode **Dev seul** (désignation
-et mail au Dev uniquement). `ResponsablePO`/PO ne sont jamais obligatoires.
+### Rôles configurables par squad (solo / binôme / trio)
+Les rôles sont définis **dans le classeur** (`Parametres` col. A), donc propres à chaque
+squad. La désignation **boucle** sur ces rôles et désigne **1 personne par rôle**
+(même algo d'équité). 1 rôle = solo, 2 = binôme, 3 = trio, N quelconque. Si un rôle listé
+n'a aucun membre actif (ou aucun disponible) → **ALERTE** (rien n'est commité, atomique).
 
 ### Algorithme de désignation (`Get-DesignePourRole`, inchangé)
 1. Candidats = membres actifs (`Actif = Oui`) du rôle.
