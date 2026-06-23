@@ -37,7 +37,7 @@ généré pour les logs orchestrateur.
 
 `SuiviExploitation.ps1 -Action <Annonce|Rappel|Test|NouvelleSquad>` plus
 `-DossierRacine`, `-Config`, `-Squad`. Organisation interne :
-- Fonctions communes : `Get-Configuration`, `Send-Mail`, `Format-Sujet`, `Build-Corps*`.
+- Fonctions communes : `Get-Configuration` (lit le JSON), `Send-Notification` (délègue au moteur), `Resolve-Chemin`, `ConvertTo-Ht`.
 - `Invoke-SquadJob` : traite UNE squad (lock, lecture, désignation, mail, swap, rétention)
   et **retourne un objet résultat** (plus de protocole texte parsé par regex).
 - `Invoke-Orchestration` : boucle sur les squads (try/catch par squad), rapport dans
@@ -64,7 +64,8 @@ généré pour les logs orchestrateur.
   **délègue** à `SendMailNotificationHTML.ps1` lancé en **process séparé**
   (`pwsh`/`powershell.exe` selon l'édition) avec `-ConfigFile <le même JSON>`, `-Status`
   (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad), `-OverrideTo`/`-OverrideCc`, `-KeyValues`.
-  Le sujet/expéditeur/SMTP/template viennent du JSON. Sinon, **repli** sur `Send-Mail` interne.
+  Le sujet/expéditeur/SMTP/template viennent du JSON. **Pas de repli** : si `MoteurMail`
+  est introuvable, l'envoi échoue explicitement (le moteur est une dépendance requise).
 - Le PO est **optionnel** : ≥1 PO actif → désignation Dev + PO ; sinon mode **Dev seul**.
 - Le mail d'**annonce** inclut deux tableaux (via `-SectionsInline` pour le moteur,
   `Build-TableHtml` pour le repli) : l'**état des compteurs** de tous les membres de la
