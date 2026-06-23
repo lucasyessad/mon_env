@@ -53,10 +53,9 @@ généré pour les logs orchestrateur.
 
 ### Excel = données métier seulement
 Feuilles `Membres`, `Congés`, `Historique`, `Log`. **Plus de feuille Paramètres lue**,
-**plus de VBA**. Les congés se saisissent directement (feuille Congés, données dès la
-ligne 6 ; l'en-tête est en ligne 5, héritage du gabarit). Mappage des colonnes inchangé
-par rapport à l'historique du projet — **ne pas le casser** (compat avec les classeurs
-existants).
+**plus de VBA**. Les congés se saisissent directement (feuille Congés, en-tête ligne 1,
+données dès la ligne 2). Colonnes Membres/Historique/Log inchangées par rapport à
+l'historique du projet — **ne pas les casser** (compat avec les classeurs existants).
 
 ### Algorithme de désignation (`Get-DesignePourRole`, inchangé)
 1. Candidats = membres actifs (`Actif = Oui`) du rôle.
