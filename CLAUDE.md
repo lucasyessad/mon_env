@@ -21,12 +21,15 @@ Tout le code vit dans `suiviexploit/`. La documentation de référence est
 ```
 suiviexploit/
 ├── SuiviExploitation.ps1            tout le code (script unique)
-├── config.psd1                      configuration unique (exemple/template)
-├── suivi_exploitation_template.xlsx gabarit Excel d'une squad
+├── config-suivi.json                configuration UNIQUE (partagée avec le moteur mail)
+├── SendMailNotificationHTML.ps1     moteur mail commun CL (envoi HTML)
+├── template-notification.html       gabarit HTML (charte Crédit Logement)
+├── suivi_exploitation_template.xlsx gabarit Excel d'une squad (listes déroulantes)
+├── suivi_exploitation_exemple.xlsx  exemple rempli
 └── README.md                        guide d'installation/exploitation
 ```
 
-Déploiement sur le partage : le script, `config.psd1` et le template à la racine ;
+Déploiement sur le partage : le script, `config-suivi.json`, le moteur mail et le template à la racine ;
 un dossier par squad contenant `suivi_exploitation.xlsx` + `historique\` ; `_logs\`
 généré pour les logs orchestrateur.
 
@@ -43,21 +46,26 @@ généré pour les logs orchestrateur.
 
 ## Concepts clés
 
-### Configuration unique (`config.psd1`)
-- Un seul fichier `.psd1` (PowerShell Data File), chargé par `Import-PowerShellDataFile`.
-- **Adresses simplifiées** : UN expéditeur global (`Expediteur`/`NomExpediteur`) pour tous
-  les mails, et UNE liste `EmailsAdmin` pour toutes les alertes (désignation impossible +
-  récap orchestrateur). Plus d'expéditeur ni de responsables par squad.
-- Contient aussi le SMTP, les sujets de mail, et la liste `Squads` (par squad :
-  `Nom`, `Classeur` obligatoires ; `EmailsCopieSquad` optionnel).
-- Clés obligatoires validées par `$script:ClesGlobales` et `$script:ClesSquad`.
-- **Chemins configurables** (optionnels) : `DossierSquads` (base des `Classeur` relatifs),
-  `DossierLogs`, `Template`. Résolus via `Resolve-Chemin` (absolu/UNC tel quel, relatif
-  contre `DossierRacine`). Un `Classeur` peut être absolu → squad dans n'importe quel partage.
-- **Plus de fusion global/local** : une squad peut surcharger un sujet en ajoutant la clé.
-- La liste des squads vient de la config (plus de scan de dossiers `_`).
-- `-Action NouvelleSquad` **écrit automatiquement** le bloc squad dans `config.psd1`
-  (insertion après `Squads = @(`, sauvegarde `.bak`, vérification du rechargement).
+### Configuration unique JSON (`config-suivi.json`)
+- **UN SEUL fichier JSON**, lu par le suivi (`ConvertFrom-Json` → `ConvertTo-Ht` en
+  hashtable) **ET** passé tel quel au moteur mail (`-ConfigFile`). Source unique.
+- Clés du **moteur** : `SmtpServer`, `Port`, `From`, `To`, `TemplatePath` (= `${TEMPLATE_PATH}`,
+  fourni par le suivi), `Subject`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `Environnement`,
+  `EquipeNom`. Clés du **suivi** : `EmailsAdmin`, `MoteurMail`, `Template`, `DossierSquads`,
+  `DossierLogs`, `Squads` (par squad : `Nom`, `Classeur` obligatoires ; `EmailsCopieSquad`).
+- Clés obligatoires validées par `$script:ClesGlobales` / `$script:ClesSquad`.
+- **Chemins configurables** via `Resolve-Chemin` (absolu/UNC tel quel, relatif contre
+  `DossierRacine`). Un `Classeur` peut être absolu → squad dans n'importe quel partage.
+- `-Action NouvelleSquad` **écrit automatiquement** la squad dans le JSON
+  (parse → ajout au tableau `Squads` → réécriture, sauvegarde `.bak`, vérif rechargement).
+
+### Envoi des mails : délégation au moteur CL
+- `Send-Notification` est le point d'envoi unique. Si `MoteurMail` (résolu) existe, il
+  **délègue** à `SendMailNotificationHTML.ps1` lancé en **process séparé**
+  (`pwsh`/`powershell.exe` selon l'édition) avec `-ConfigFile <le même JSON>`, `-Status`
+  (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad), `-OverrideTo`/`-OverrideCc`, `-KeyValues`.
+  Le sujet/expéditeur/SMTP/template viennent du JSON. Sinon, **repli** sur `Send-Mail` interne.
+- Le PO est **optionnel** : ≥1 PO actif → désignation Dev + PO ; sinon mode **Dev seul**.
 
 ### Excel = données métier seulement
 Feuilles `Membres`, `Congés`, `Historique`, `Log`. **Plus de feuille Paramètres lue**,
@@ -89,7 +97,7 @@ restent la seule protection.
 - **Langue** : tout (code, commentaires, messages, mails) en **français**.
 - **PowerShell 5.1** : `Set-StrictMode -Version Latest` + `$ErrorActionPreference='Stop'`.
   Pas de syntaxe PS7-only.
-- **Encodage** : `SuiviExploitation.ps1` et `config.psd1` sont en **UTF-8 avec BOM**
+- **Encodage** : `SuiviExploitation.ps1` et `config-suivi.json` sont en **UTF-8 avec BOM**
   (indispensable aux accents sous PS 5.1). **Conserver le BOM** lors des éditions
   (les outils d'édition peuvent le retirer — vérifier après coup).
 - **Dépendance** : module `ImportExcel` (installé auto en `-Scope CurrentUser`).

@@ -15,7 +15,7 @@ Tout vit dans [`suiviexploit/`](suiviexploit/) :
 | Fichier | Rôle |
 |---|---|
 | `SuiviExploitation.ps1` | **Script unique** : `-Action Annonce\|Rappel\|Test\|NouvelleSquad` |
-| `config.psd1` | **Configuration unique** (SMTP + liste des squads), éditable au bloc-notes |
+| `config-suivi.json` | **Configuration unique JSON** (partagée avec le moteur mail) |
 | `suivi_exploitation_template.xlsx` | Gabarit Excel pour onboarder une squad |
 | `README.md` | Guide d'installation et d'exploitation complet |
 
