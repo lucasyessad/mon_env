@@ -103,8 +103,9 @@ Verrou `<squad>\suivi_exploitation.lock` pendant le traitement ; attente du verr
 - **Langue** : tout (code, messages, mails, doc) en **français**.
 - **PowerShell 5.1** : `Set-StrictMode -Version Latest` + `$ErrorActionPreference='Stop'`.
   Pas de syntaxe PS7-only.
-- **Style** : le code n'a **pas de commentaires** (base volontairement épurée). Ne pas
-  réintroduire de commentaires explicatifs sans raison ; documenter dans le README.
+- **Style** : commentaires **limités aux parties complexes** (dates, désignation,
+  délégation moteur, écriture transactionnelle…). Pas de commentaire qui paraphrase le
+  code ; le détail fonctionnel va dans le README.
 - **Encodage** : `SuiviExploitation.ps1` et `config-suivi.json` en **UTF-8 avec BOM**
   (accents sous PS 5.1). **Conserver le BOM** lors des éditions (les outils peuvent le
   retirer — vérifier après coup). Tout le pipeline est UTF-8 (accents validés de bout en bout).
