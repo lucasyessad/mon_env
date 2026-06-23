@@ -1,0 +1,21 @@
+# --- Excel / Office temporaires ---
+~$*
+*.tmp
+*.lock
+*.bak
+
+# --- Suivi d'Exploitation : artefacts générés à l'exécution ---
+_logs/
+historique/
+*.journal.log
+*.log
+
+# --- PowerShell ---
+*.ps1xml.bak
+
+# --- OS / éditeurs ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
