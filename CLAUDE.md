@@ -109,6 +109,9 @@ son `conf-suivi-squad.json`, `TemplatePath` résolu, clés `_…` retirées) **s
 `-Status` (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad), `-OverrideTo` (les **désignés**),
 `-OverrideCc` (copies), `-KeyValues`, `-SectionFile`.
 **Pas de repli** : si le moteur est introuvable, l'envoi échoue explicitement.
+Le moteur ne connaît pas la **semaine cible** : `Send-Notification -Remplacements` injecte les
+placeholders maison `{{SEMAINE}}` / `{{SEMAINE_NUM}}` / `{{PERIODE}}` (calculés depuis `$Lundi`)
+dans le JSON sérialisé **avant** envoi (utilisables dans `Subject` et les messages `Statuses`).
 
 Les sections (tableaux, notes) sont passées à `Send-Notification` en **objets** puis
 sérialisées **une seule fois** via `ConvertTo-JsonSafe` (émetteur JSON maison). C'est
