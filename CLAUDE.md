@@ -75,13 +75,16 @@ Email, DateAnnonce, DateRappel, Statut, Note`). Listes déroulantes : `Rôle` =
 `Parametres!$A$2:$A$50`, `Actif` = Oui/Non, `Congés!Membre` = noms de `Membres`. Lecture
 tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures encadrées par `@(...)`.
 
-### Désignation (par rôle) — fidèle à l'ancien ODI
+### Désignation (par rôle)
 Pour chaque rôle de `Parametres`, on désigne 1 personne : candidats actifs du rôle →
 exclusion congés (semaine cible ou vendredi précédent) → exclusion du désigné précédent
-de ce rôle (sauf seul candidat) → **min `NB_FOIS`** (le moins souvent désigné), égalité
-par `Nom`. **Pas de critère de date.** `NB_FOIS` = `Compteur` (graine de la feuille
-`Membres`) + nb de désignations dans l'`Historique` ; **dérivé de l'historique**, le
-script n'écrit jamais dans `Membres`.
+de ce rôle (sauf seul candidat) → **tri** par ordre de priorité : 1) **dernière
+désignation la plus ancienne** (ceux qui n'ont **jamais** fait d'abord), 2) **min
+`NB_FOIS`** (le moins souvent désigné), 3) `Nom`. La « dernière désignation » est la
+semaine la plus récente trouvée dans l'`Historique` pour la personne (jamais = priorité
+absolue, modélisé par `[DateTime]::MinValue`). `NB_FOIS` = `Compteur` (graine de la
+feuille `Membres`) + nb de désignations dans l'`Historique`. Les deux critères sont
+**dérivés de l'historique** ; le script n'écrit jamais dans `Membres`.
 **Recalcul idempotent** (`Invoke-DesignationSemaine`) partagé par Annonce et Rappel : on
 supprime les lignes de la semaine cible puis on redésigne depuis les données à jour.
 Donc `Rappel` (lundi, semaine en cours) reprend les congés ajoutés le week-end. Si un rôle
