@@ -94,9 +94,17 @@ n'a aucun candidat → **ALERTE atomique** (aucune désignation commitée), mail
 `Send-Notification` est le point d'envoi unique. Il **délègue toujours** à
 `SendMailNotificationHTML.ps1` (lancé en **process séparé** : `pwsh`/`powershell.exe`
 selon l'édition) avec `-ConfigFile <le même JSON>`, `-Status` (DESIGNATION/RAPPEL/ALERTE),
-`-NomJob` (squad), `-OverrideTo`/`-OverrideCc`, `-KeyValues`, `-SectionsInline`. SMTP,
+`-NomJob` (squad), `-OverrideTo`/`-OverrideCc`, `-KeyValues`, et un `-SectionFile`. SMTP,
 expéditeur, sujet et template viennent du JSON. **Pas de repli** : si le moteur est
 introuvable, l'envoi échoue explicitement.
+
+Les sections (tableaux, notes) sont passées à `Send-Notification` en **objets** puis
+sérialisées **une seule fois** via `ConvertTo-JsonSafe` (émetteur JSON maison). C'est
+**volontaire** : `ConvertTo-Json` de PS 5.1 « déballe » les tableaux à un seul élément et
+n'échappe pas comme PS 7, ce qui produisait un JSON invalide → sections silencieusement
+perdues (mail réduit à la seule ligne « Désignation de la semaine »). Toute construction de
+lignes de tableau utilise `… += , @(...)` puis `return , $rows` pour ne pas déballer une
+ligne unique. **Ne pas réintroduire d'aller-retour `ConvertTo-Json`/`ConvertFrom-Json`.**
 
 Le mail d'**annonce** inclut (via `-SectionsInline`) un tableau de **compteurs par rôle**
 (`Get-CompteursRows <Role>`) et la **prévision des 3 prochaines semaines**
