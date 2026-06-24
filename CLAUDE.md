@@ -75,12 +75,17 @@ Email, DateAnnonce, DateRappel, Statut, Note`). Listes déroulantes : `Rôle` =
 `Parametres!$A$2:$A$50`, `Actif` = Oui/Non, `Congés!Membre` = noms de `Membres`. Lecture
 tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures encadrées par `@(...)`.
 
-### Désignation (par rôle)
+### Désignation (par rôle) — fidèle à l'ancien ODI
 Pour chaque rôle de `Parametres`, on désigne 1 personne : candidats actifs du rôle →
 exclusion congés (semaine cible ou vendredi précédent) → exclusion du désigné précédent
-de ce rôle (sauf seul candidat) → tri `DateDernierSuivi` ↑, `Compteur` ↑, `Nom` ↑.
-Nouveaux membres initialisés à la médiane des dates du rôle. Si un rôle listé n'a aucun
-candidat → **ALERTE atomique** (rien n'est commité), mail aux `EmailsAdmin`.
+de ce rôle (sauf seul candidat) → **min `NB_FOIS`** (le moins souvent désigné), égalité
+par `Nom`. **Pas de critère de date.** `NB_FOIS` = `Compteur` (graine de la feuille
+`Membres`) + nb de désignations dans l'`Historique` ; **dérivé de l'historique**, le
+script n'écrit jamais dans `Membres`.
+**Recalcul idempotent** (`Invoke-DesignationSemaine`) partagé par Annonce et Rappel : on
+supprime les lignes de la semaine cible puis on redésigne depuis les données à jour.
+Donc `Rappel` (lundi, semaine en cours) reprend les congés ajoutés le week-end. Si un rôle
+n'a aucun candidat → **ALERTE atomique** (aucune désignation commitée), mail aux `EmailsAdmin`.
 
 ### Envoi des mails : délégation au moteur CL
 `Send-Notification` est le point d'envoi unique. Il **délègue toujours** à
