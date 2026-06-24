@@ -50,12 +50,13 @@ journal daté de chaque squad (`_logs\<squad>_<date>.journal.log`).
 ### Configuration : un seul JSON, partagé avec le moteur mail
 - `config-suivi.json` est lu par le suivi (`ConvertFrom-Json` → `ConvertTo-Ht`) **et**
   passé tel quel au moteur (`-ConfigFile`). Source unique.
-- Clés **moteur** : `SmtpServer`, `Port`, `From`, `To`, `TemplatePath` (= `${TEMPLATE_PATH}`,
-  fourni par le suivi via une variable d'environnement), `Subject`, `Statuses`
-  (DESIGNATION/RAPPEL/ALERTE), `Environnement`, `EquipeNom`.
-- Clés **suivi** : `EmailsAdmin`, `MoteurMail`, `Template` (HTML), `TemplateClasseur`
-  (xlsx pour NouvelleSquad), `DossierSquads`, `DossierLogs`, `Squads`
-  (par squad : `Nom`, `Classeur` — c'est tout).
+- Clés **moteur** : `SmtpServer`, `Port`, `From`, `To`, `TemplatePath` (chemin du gabarit
+  HTML), `Subject`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `Environnement`, `EquipeNom`.
+- Clés **suivi** : `EmailsAdmin`, `MoteurMail`, `TemplateClasseur` (xlsx pour NouvelleSquad),
+  `DossierSquads`, `DossierLogs`, `Squads` (par squad : `Nom`, `Classeur` — c'est tout).
+- `TemplatePath` est **partagé** : le suivi le résout (relatif → `DossierRacine`, absolu/UNC
+  tel quel) et le réinjecte dans une **copie résolue de la config** passée au moteur (plus de
+  variable d'environnement `${TEMPLATE_PATH}` ; backslashes doublés pour rester du JSON valide).
 - Obligatoires validées par `$script:ClesGlobales` (`SmtpServer`, `From`, `To`,
   `TemplatePath`, `EmailsAdmin`) et `$script:ClesSquad` (`Nom`, `Classeur`).
 - `Classeur` absolu/UNC pris tel quel ; relatif résolu via `DossierSquads` puis
