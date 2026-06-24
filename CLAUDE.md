@@ -29,7 +29,8 @@ suiviexploit/
 ```
 
 Déploiement : ces fichiers à la racine du partage ; un dossier par squad contenant
-`suivi_exploitation.xlsx` + `historique\` ; `_logs\` généré pour l'orchestrateur.
+`suivi_exploitation.xlsx` + `historique\` ; `_logs\` généré pour l'orchestrateur **et** le
+journal daté de chaque squad (`_logs\<squad>_<date>.journal.log`).
 
 ## Organisation du script
 
