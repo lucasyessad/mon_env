@@ -103,8 +103,13 @@ Le mail d'**annonce** inclut (via `-SectionsInline`) un tableau de **compteurs p
 (`Get-PrevisionRows`, 1 colonne par rôle, simulation de l'algo sur copies en mémoire).
 
 ### Accès concurrent au classeur
-Verrou `<squad>\suivi_exploitation.lock` pendant le traitement ; attente du verrou Excel
-`~$*` ; écriture transactionnelle (`.tmp` → archive l'ancien → renomme).
+Verrou applicatif `<squad>\suivi_exploitation.lock` **honoré** : si un verrou est présent et
+récent (< `$script:VerrouStaleMinutes`, 120 min) le traitement de la squad est **abandonné**
+(ERREUR) ; au-delà il est considéré orphelin (process tué) et ignoré avec WARN. Le `.lock`
+n'est supprimé que par le process qui l'a créé (drapeau `$jaiLeVerrou`). On attend aussi le
+verrou Excel `~$*`. Écriture **transactionnelle** : le résultat est calculé dans un `.tmp`,
+on **copie** l'état courant dans `historique\` puis on **promeut** le `.tmp` (écrasement) —
+pas de fenêtre où le classeur a disparu si la promotion échoue.
 
 ## Conventions de modification
 
