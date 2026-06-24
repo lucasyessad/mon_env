@@ -89,17 +89,18 @@ exclusion congés (semaine cible ou vendredi précédent) → exclusion du dési
 de ce rôle (sauf seul candidat) → **tri** par ordre de priorité : 1) **dernière
 désignation la plus ancienne** (ceux qui n'ont **jamais** fait d'abord), 2) **min
 `NB_FOIS`** (le moins souvent désigné), 3) `Nom`. La « dernière désignation » est la
-semaine la plus récente trouvée dans l'`Historique` pour la personne. **Graines
-d'initialisation** (feuille `Membres`, utilisées uniquement tant que la personne n'a PAS de
-ligne dans `Historique`, ensuite l'historique prime) : `Compteur` (col E) graine de `NB_FOIS`,
-et `DateDernierSuivi` (col D) graine de la « dernière désignation » (cf. `Get-DerniereDe`) ;
-sans graine ni historique → jamais désigné (`[DateTime]::MinValue`, priorité absolue).
-`NB_FOIS` = `Compteur` + nb de désignations dans l'`Historique`. Le script n'écrit jamais
-dans `Membres`.
+semaine la plus récente trouvée dans l'`Historique` pour la personne ; en repli (pas encore
+d'historique) la graine `DateDernierSuivi` (col D de `Membres`, cf. `Get-DerniereDe`) ; sinon
+jamais désigné (`[DateTime]::MinValue`, priorité absolue).
+**`NB_FOIS` = colonne `Compteur` (col E) = CUMUL VIVANT** : `Get-NbFoisDe` la lit telle quelle ;
+le script l'**incrémente (+1 par désignation) et la réécrit dans `Membres`** (seule colonne
+écrite dans cette feuille). La valeur de départ saisie sert de point de comptage initial.
 **Recalcul idempotent** (`Invoke-DesignationSemaine`) partagé par Annonce et Rappel : on
-supprime les lignes de la semaine cible puis on redésigne depuis les données à jour.
-Donc `Rappel` (lundi, semaine en cours) reprend les congés ajoutés le week-end. Si un rôle
-n'a aucun candidat → **ALERTE atomique** (aucune désignation commitée), mail aux `EmailsAdmin`.
+supprime les lignes de la semaine cible puis on redésigne depuis les données à jour. Pour le
+`Compteur`, avant recalcul on **annule** (-1) l'incrément éventuel de la semaine puis on
+ré-incrémente → pas de double comptage sur relance. Donc `Rappel` (lundi, semaine en cours)
+reprend les congés ajoutés le week-end. Si un rôle n'a aucun candidat → **ALERTE atomique**
+(aucune désignation commitée), mail aux `EmailsAdmin`.
 
 ### Envoi des mails : délégation au moteur CL
 `Send-Notification` est le point d'envoi unique. Il **délègue toujours** à
