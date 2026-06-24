@@ -19,70 +19,62 @@ Tout le code vit dans `suiviexploit/`. La référence fonctionnelle est
 
 ```
 suiviexploit/
-├── SuiviExploitation.ps1            tout le code (script unique)
-├── config-suivi.json                configuration globale (partagée avec le moteur mail)
-├── SendMailNotificationHTML.ps1     moteur d'envoi HTML (dépendance requise)
-├── template-notification.html       gabarit HTML des mails
+├── SuiviExploitation.ps1            tout le code (script unique, global)
+├── SendMailNotificationHTML.ps1     moteur d'envoi HTML (dépendance partagée, NON modifiée)
+├── template-notification.html       gabarit HTML des mails (partagé)
 ├── suivi_exploitation_template.xlsx gabarit d'un classeur de squad
 ├── suivi_exploitation_exemple.xlsx  exemple rempli
-├── conf-suivi-squad.exemple.json    exemple commenté de config mail par squad
+├── conf-suivi-squad.exemple.json    exemple commenté de config COMPLÈTE d'une squad
 └── README.md                        guide d'installation/exploitation
 ```
 
-Déploiement : ces fichiers à la racine du partage ; un dossier par squad contenant
-`suivi_exploitation.xlsx`, un `conf-suivi-squad.json` optionnel (surcharges mail) et
-`historique\` ; `_logs\` généré pour l'orchestrateur **et** le journal daté de chaque squad
-(`_logs\<squad>_<date>.journal.log`).
+**Pas de config globale.** Déploiement : ces fichiers partagés à la racine ; puis **un dossier
+par squad** contenant `conf-suivi-squad.json` (config complète), `suivi_exploitation.xlsx` et
+`historique\`. Les squads sont **découvertes en scannant les sous-dossiers** de `-DossierRacine`
+(un dossier avec `conf-suivi-squad.json` = une squad ; dossiers `_…` ignorés). `_logs\` reçoit
+le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<date>.journal.log`).
 
 ## Organisation du script
 
 `SuiviExploitation.ps1 -Action <Annonce|Rappel|Test|NouvelleSquad>` plus `-DossierRacine`,
-`-Config`, `-Squad`.
+`-Squad` (filtre par nom de dossier / `Nom`). **Plus de `-Config`** : chaque squad porte sa config.
 
-- Outils communs : `Get-Opt`, `ConvertTo-Ht` (JSON → hashtable), `Resolve-Chemin`,
-  `Resolve-MoteurMail`, `Get-Configuration`, `Send-Notification`.
-- `Invoke-SquadJob` : traite UNE squad (verrou, lecture, désignation, mail, écriture
-  transactionnelle, rétention) et **retourne un objet résultat** (`Squad`/`Statut`/`Detail`).
-- `Invoke-Orchestration` : boucle sur les squads (try/catch par squad), journal dans
-  `_logs\`, mail récapitulatif **uniquement** en cas d'anomalie.
-- `Invoke-Test` : validation. `Invoke-NouvelleSquad` : onboarding.
+- Outils communs : `Get-Opt`, `ConvertTo-Ht` (JSON → hashtable), `ConvertTo-Liste`,
+  `Resolve-Chemin`, `Resolve-MoteurMail`, `ConvertTo-JsonSafe`, `Send-Notification`.
+- `Get-DossiersSquads` (scan des sous-dossiers) + `Get-ConfSquad` (charge le `conf-suivi-squad.json`
+  d'une squad → hashtable). Remplacent l'ancien `Get-Configuration` global.
+- `Invoke-SquadJob` : traite UNE squad (reçoit son dossier + sa config complète ; verrou, lecture,
+  désignation, mail, écriture transactionnelle, rétention) et **retourne** `Squad`/`Statut`/`Detail`.
+- `Invoke-Orchestration` : découvre les squads, boucle (try/catch par squad), journal dans
+  `_logs\`. **Pas de mail récapitulatif global** (chaque squad alerte ses propres `EmailsAdmin`).
+- `Invoke-Test` : validation par squad. `Get-ConfSquadModele` + `Invoke-NouvelleSquad` : onboarding.
 
 ## Concepts clés
 
-### Configuration : un seul JSON, partagé avec le moteur mail
-- `config-suivi.json` est lu par le suivi (`ConvertFrom-Json` → `ConvertTo-Ht`) **et**
-  passé tel quel au moteur (`-ConfigFile`). Source unique.
-- Clés **moteur** : `SmtpServer`, `Port`, `From`, `To`, `TemplatePath` (chemin du gabarit
-  HTML), `Subject`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `Environnement`, `EquipeNom`.
-- Clés **suivi** : `EmailsAdmin`, `MoteurMail`, `TemplateClasseur` (xlsx pour NouvelleSquad),
-  `DossierSquads`, `DossierLogs`, `Squads` (par squad : `Nom`, `Classeur` — c'est tout).
-- `TemplatePath` est **partagé** : le suivi le résout (relatif → `DossierRacine`, absolu/UNC
-  tel quel) et le réinjecte dans la **config effective de squad** sérialisée pour le moteur (plus
-  de variable d'environnement `${TEMPLATE_PATH}`).
-- **Config mail par squad** : un `conf-suivi-squad.json` dans le dossier du classeur surcharge
-  ce JSON global (précédence fichier squad > global > défaut). Clés de **documentation** `_…`
-  (ex. `_commentaires`) tolérées : ignorées par le code et **non transmises** au moteur.
-- Obligatoires validées par `$script:ClesGlobales` (`SmtpServer`, `From`, `To`,
-  `TemplatePath`, `EmailsAdmin`) et `$script:ClesSquad` (`Nom`, `Classeur`).
-- `Classeur` absolu/UNC pris tel quel ; relatif résolu via `DossierSquads` puis
-  `DossierRacine` (`Resolve-Chemin`).
-- `-Action NouvelleSquad` **met à jour le JSON** (ajout au tableau `Squads`, sauvegarde
-  `.bak`, vérification du rechargement).
+### Configuration : une config COMPLÈTE par squad (pas de global)
+- Chaque squad = un sous-dossier de `-DossierRacine` contenant `conf-suivi-squad.json`.
+  `Get-DossiersSquads` scanne ces dossiers ; `Get-ConfSquad` lit le fichier
+  (`ConvertFrom-Json` → `ConvertTo-Ht`). **Il n'y a pas de `config-suivi.json` global.**
+- Ce fichier est **autonome et complet** : `SmtpServer`, `Port`, `From`, `To`, `Cc`,
+  `EmailsAdmin`, `TemplatePath`, `MoteurMail`, `Classeur`, `Subject`, `Environnement`,
+  `EquipeNom`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), et `Nom` (affiché, défaut = nom du dossier).
+- Obligatoires validées par `$script:ClesConfSquad` (`SmtpServer`, `From`, `To`, `TemplatePath`,
+  `EmailsAdmin`). Constantes : `$script:NomConfSquad` (`conf-suivi-squad.json`), `$script:NomClasseur`.
+- Le **To** des mails de désignation reste **les désignés** ; `To` n'est qu'un **repli** si aucun
+  désigné n'a d'adresse. `Cc` vide ⇒ tous les membres actifs. `EmailsAdmin` = alertes de la squad.
+- Clés de **documentation** `_…` (ex. `_commentaire`) tolérées : ignorées par le code et **non
+  transmises** au moteur. `TemplatePath`/`MoteurMail`/`Classeur` : relatifs (résolus via la racine,
+  ou le dossier de squad pour `Classeur`) ou absolus/UNC (`Resolve-Chemin`).
+- `-Action NouvelleSquad` crée le dossier, copie le classeur et **écrit un `conf-suivi-squad.json`
+  complet** (`New-ConfSquadComplete` + saisies) ; il ne touche aucun fichier global.
 
-### Configuration par squad : 2 sources
-1. **Feuille `Parametres` du classeur** (données métier de la squad) :
-   - **Colonne A** : rôles à désigner, ordonnés (1=solo, 2=binôme, 3=trio…). Alimente aussi
-     la liste déroulante `Rôle` de `Membres`. Lue dans `$rolesADesigner`.
-   - **Colonnes C/D** : paires clé/valeur self-service, lues dans `$paramKV` : `Note <Rôle>`
-     (texte affiché dans le mail) et `EmailsCopieSquad` (*legacy* Cc, repli seulement). Zone
-     extensible. **La config mail ne se met plus ici.**
-2. **Fichier `conf-suivi-squad.json`** dans le **dossier du classeur** (config mail) : surcharge
-   le JSON global **pour cette squad**. Construit `$cfgSquad` = global (hors `Squads` et clés
-   `_…`) **fusionné** avec ce fichier. Précédence : **fichier squad > global > défaut**.
-   N'IMPORTE QUELLE clé du global (`From`, `Subject`, `To`, `Cc`, `EmailsAdmin`, `SmtpServer`,
-   `Statuses`…) y est surchargeable. Listes lues via `ConvertTo-Liste` (tableau JSON ou chaîne
-   `;`/`,`). Le **To** des mails de désignation reste **les désignés** (`To` = repli si aucun) ;
-   `EmailsAdmin` est par squad pour les alertes, **global** pour le récap d'orchestration.
+### Données métier dans le classeur (feuille `Parametres`)
+- **Colonne A** : rôles à désigner, ordonnés (1=solo, 2=binôme, 3=trio…). Alimente aussi la liste
+  déroulante `Rôle` de `Membres`. Lue dans `$rolesADesigner`.
+- **Colonnes C/D** : paires clé/valeur self-service, lues dans `$paramKV` : `Note <Rôle>` (texte
+  affiché dans le mail) et `EmailsCopieSquad` (*legacy* Cc, repli seulement). Zone extensible.
+  **La config mail ne se met PAS ici** : elle est dans `conf-suivi-squad.json`. Des commentaires
+  de cellule (A1/C1) le rappellent dans le classeur.
 
 ### Excel = données métier + config squad
 Feuilles `Parametres`, `Membres`, `Congés`, `Historique`, `Log`. **Pas de VBA.**
@@ -110,12 +102,12 @@ n'a aucun candidat → **ALERTE atomique** (aucune désignation commitée), mail
 `Send-Notification` est le point d'envoi unique. Il **délègue toujours** à
 `SendMailNotificationHTML.ps1` (lancé en **process séparé** : `pwsh`/`powershell.exe`
 selon l'édition). **Le moteur (outil commun) n'est PAS modifié** : il lit TOUTE sa config
-dans `-ConfigFile`. On lui passe donc la **config effective de la squad** (`$cfgSquad` =
-global surchargé par `conf-suivi-squad.json`, `TemplatePath` résolu, clés `_…`/`Squads`
-retirées) **sérialisée via `ConvertTo-JsonSafe`** dans un fichier temporaire. Ainsi
-`From`/`Subject`/`SmtpServer`/`Statuses`… sont surchargés **par squad** sans toucher au
-moteur. Restent passés en ligne : `-Status` (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad),
-`-OverrideTo` (les **désignés**), `-OverrideCc` (copies), `-KeyValues`, `-SectionFile`.
+dans `-ConfigFile`. On lui passe donc la **config complète de la squad** (`$cfgSquad` =
+son `conf-suivi-squad.json`, `TemplatePath` résolu, clés `_…` retirées) **sérialisée via
+`ConvertTo-JsonSafe`** dans un fichier temporaire. Ainsi `From`/`Subject`/`SmtpServer`/
+`Statuses`… sont propres **à la squad** sans toucher au moteur. Restent passés en ligne :
+`-Status` (DESIGNATION/RAPPEL/ALERTE), `-NomJob` (squad), `-OverrideTo` (les **désignés**),
+`-OverrideCc` (copies), `-KeyValues`, `-SectionFile`.
 **Pas de repli** : si le moteur est introuvable, l'envoi échoue explicitement.
 
 Les sections (tableaux, notes) sont passées à `Send-Notification` en **objets** puis
@@ -147,9 +139,10 @@ pas de fenêtre où le classeur a disparu si la promotion échoue.
 - **Style** : commentaires **limités aux parties complexes** (dates, désignation,
   délégation moteur, écriture transactionnelle…). Pas de commentaire qui paraphrase le
   code ; le détail fonctionnel va dans le README.
-- **Encodage** : `SuiviExploitation.ps1` et `config-suivi.json` en **UTF-8 avec BOM**
-  (accents sous PS 5.1). **Conserver le BOM** lors des éditions (les outils peuvent le
-  retirer — vérifier après coup). Tout le pipeline est UTF-8 (accents validés de bout en bout).
+- **Encodage** : `SuiviExploitation.ps1` en **UTF-8 avec BOM** (accents sous PS 5.1) ; les
+  `conf-suivi-squad.json` en **UTF-8** (BOM recommandé). **Conserver le BOM** lors des éditions
+  (les outils peuvent le retirer — vérifier après coup). Le moteur `SendMailNotificationHTML.ps1`
+  est en **ANSI/Windows-1252** (pas de BOM) — **ne pas le réencoder**. Pipeline UTF-8 de bout en bout.
 - **Dépendances** : module `ImportExcel` (installé auto en `-Scope CurrentUser`) ; moteur
   `SendMailNotificationHTML.ps1`.
 - **Rétention** : `$script:RetentionJours` (28) en haut du script — un seul endroit.
