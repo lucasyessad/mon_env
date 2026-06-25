@@ -94,11 +94,15 @@ d'historique) la graine `DateDernierSuivi` (col D de `Membres`, cf. `Get-Dernier
 jamais désigné (`[DateTime]::MinValue`, priorité absolue).
 **`NB_FOIS` = colonne `Compteur` (col E) = CUMUL VIVANT** : `Get-NbFoisDe` la lit telle quelle ;
 le script l'**incrémente (+1 par désignation) et la réécrit dans `Membres`** (seule colonne
-écrite dans cette feuille). La valeur de départ saisie sert de point de comptage initial.
+écrite dans cette feuille), **mais UNIQUEMENT au `Rappel`** : la désignation d'`Annonce`
+(vendredi) est **prévisionnelle** (congés/changements possibles le week-end), donc elle
+**ne touche pas au `Compteur`** ; seul le `Rappel` du lundi confirme et incrémente. La valeur
+de départ saisie sert de point de comptage initial.
 **Recalcul idempotent** (`Invoke-DesignationSemaine`) partagé par Annonce et Rappel : on
 supprime les lignes de la semaine cible puis on redésigne depuis les données à jour. Pour le
-`Compteur`, avant recalcul on **annule** (-1) l'incrément éventuel de la semaine puis on
-ré-incrémente → pas de double comptage sur relance. Donc `Rappel` (lundi, semaine en cours)
+`Compteur` (touché au seul `Rappel`), avant recalcul on **annule** (-1) l'incrément d'un
+`Rappel` précédent (lignes dont la `DateRappel` est renseignée) puis on ré-incrémente → pas
+de double comptage sur relance. Donc `Rappel` (lundi, semaine en cours)
 reprend les congés ajoutés le week-end. Si un rôle n'a aucun candidat → **ALERTE atomique**
 (aucune désignation commitée), mail aux `EmailsAdmin`.
 
