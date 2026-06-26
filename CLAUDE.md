@@ -57,7 +57,8 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
   (`ConvertFrom-Json` → `ConvertTo-Ht`). **Il n'y a pas de `config-suivi.json` global.**
 - Ce fichier est **autonome et complet** : `SmtpServer`, `Port`, `From`, `To`, `Cc`,
   `EmailsAdmin`, `TemplatePath`, `MoteurMail`, `Classeur`, `Subject`, `Environnement`,
-  `EquipeNom`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), et `Nom` (affiché, défaut = nom du dossier).
+  `EquipeNom`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `ToleranceCongesJours` (défaut 0),
+  et `Nom` (affiché, défaut = nom du dossier).
 - Obligatoires validées par `$script:ClesConfSquad` (`SmtpServer`, `From`, `To`, `TemplatePath`,
   `EmailsAdmin`). Constantes : `$script:NomConfSquad` (`conf-suivi-squad.json`), `$script:NomClasseur`.
 - Le **To** des mails de désignation reste **les désignés** ; `To` n'est qu'un **repli** si aucun
@@ -85,13 +86,18 @@ tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures encadrée
 
 ### Désignation (par rôle)
 Pour chaque rôle de `Parametres`, on désigne 1 personne : candidats actifs du rôle →
-exclusion congés (semaine cible ou vendredi précédent) → exclusion du désigné précédent
+exclusion congés → exclusion du désigné précédent
 de ce rôle (sauf seul candidat) → **tri** par ordre de priorité : 1) **min `NB_FOIS`**
 (le moins souvent désigné — équité réelle sur le nombre de fois), 2) à égalité, **dernière
 désignation la plus ancienne** (ceux qui n'ont **jamais** fait d'abord), 3) `Nom`. La « dernière désignation » est la
 semaine la plus récente trouvée dans l'`Historique` pour la personne ; en repli (pas encore
 d'historique) la graine `DateDernierSuivi` (col D de `Membres`, cf. `Get-DerniereDe`) ; sinon
 jamais désigné (`[DateTime]::MinValue`, priorité absolue).
+**Exclusion congés** : sur la **semaine cible**, exclu si le nb de **jours ouvrés**
+(lundi→vendredi) en congé **dépasse** `ToleranceCongesJours` (clé `conf-suivi-squad.json`,
+défaut 0 = exclu dès 1 jour ; cf. `Get-NbJoursCongesSemaine`). Le **vendredi précédent**
+(jour de l'annonce) reste une exclusion **stricte** (`Test-MembreEnConges`), non soumise à la
+tolérance. Même logique répliquée dans `Select-Sim` (prévision).
 **`NB_FOIS` = colonne `Compteur` (col E) = CUMUL VIVANT** : `Get-NbFoisDe` la lit telle quelle ;
 le script l'**incrémente (+1 par désignation) et la réécrit dans `Membres`** (seule colonne
 écrite dans cette feuille), **mais UNIQUEMENT au `Rappel`** : la désignation d'`Annonce`
