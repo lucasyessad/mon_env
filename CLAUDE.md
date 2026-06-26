@@ -73,7 +73,8 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
 - **Colonne A** : rôles à désigner, ordonnés (1=solo, 2=binôme, 3=trio…). Alimente aussi la liste
   déroulante `Rôle` de `Membres`. Lue dans `$rolesADesigner`.
 - **Colonnes C/D** : paires clé/valeur self-service, lues dans `$paramKV` : `Note <Rôle>` (texte
-  affiché dans le mail) et `EmailsCopieSquad` (*legacy* Cc, repli seulement). Zone extensible.
+  affiché dans le mail), `EmailsCopieSquad` (*legacy* Cc, repli seulement) et `ToleranceCongesJours`
+  (règle de désignation, **prioritaire** ici sur le JSON ; cf. exclusion congés). Zone extensible.
   **La config mail ne se met PAS ici** : elle est dans `conf-suivi-squad.json`. Des commentaires
   de cellule (A1/C1) le rappellent dans le classeur.
 
@@ -94,8 +95,8 @@ semaine la plus récente trouvée dans l'`Historique` pour la personne ; en repl
 d'historique) la graine `DateDernierSuivi` (col D de `Membres`, cf. `Get-DerniereDe`) ; sinon
 jamais désigné (`[DateTime]::MinValue`, priorité absolue).
 **Exclusion congés** : sur la **semaine cible**, exclu si le nb de **jours ouvrés**
-(lundi→vendredi) en congé **dépasse** `ToleranceCongesJours` (clé `conf-suivi-squad.json`,
-défaut 0 = exclu dès 1 jour ; cf. `Get-NbJoursCongesSemaine`). Le **vendredi précédent**
+(lundi→vendredi) en congé **dépasse** `ToleranceCongesJours` (feuille `Parametres` C/D en
+priorité, repli sur `conf-suivi-squad.json`, défaut 0 = exclu dès 1 jour ; cf. `Get-NbJoursCongesSemaine`). Le **vendredi précédent**
 (jour de l'annonce) reste une exclusion **stricte** (`Test-MembreEnConges`), non soumise à la
 tolérance. Même logique répliquée dans `Select-Sim` (prévision).
 **`NB_FOIS` = colonne `Compteur` (col E) = CUMUL VIVANT** : `Get-NbFoisDe` la lit telle quelle ;
