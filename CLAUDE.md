@@ -86,9 +86,9 @@ tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures encadrée
 ### Désignation (par rôle)
 Pour chaque rôle de `Parametres`, on désigne 1 personne : candidats actifs du rôle →
 exclusion congés (semaine cible ou vendredi précédent) → exclusion du désigné précédent
-de ce rôle (sauf seul candidat) → **tri** par ordre de priorité : 1) **dernière
-désignation la plus ancienne** (ceux qui n'ont **jamais** fait d'abord), 2) **min
-`NB_FOIS`** (le moins souvent désigné), 3) `Nom`. La « dernière désignation » est la
+de ce rôle (sauf seul candidat) → **tri** par ordre de priorité : 1) **min `NB_FOIS`**
+(le moins souvent désigné — équité réelle sur le nombre de fois), 2) à égalité, **dernière
+désignation la plus ancienne** (ceux qui n'ont **jamais** fait d'abord), 3) `Nom`. La « dernière désignation » est la
 semaine la plus récente trouvée dans l'`Historique` pour la personne ; en repli (pas encore
 d'historique) la graine `DateDernierSuivi` (col D de `Membres`, cf. `Get-DerniereDe`) ; sinon
 jamais désigné (`[DateTime]::MinValue`, priorité absolue).
