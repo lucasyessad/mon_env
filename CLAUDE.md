@@ -43,8 +43,6 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
   `Resolve-Chemin`, `Resolve-MoteurMail`, `ConvertTo-JsonSafe`, `Send-Notification`.
 - `Get-DossiersSquads` (scan des sous-dossiers) + `Get-ConfSquad` (charge le `conf-suivi-squad.json`
   d'une squad → hashtable). Remplacent l'ancien `Get-Configuration` global.
-  `Select-SquadsParFiltre` applique `-Squad` (nom de dossier ou `Nom` de la config,
-  correspondance **exacte**) ; `Test-ConfSquad` valide présence + non-vacuité des clés.
 - `Invoke-SquadJob` : traite UNE squad (reçoit son dossier + sa config complète ; verrou, lecture,
   désignation, mail, écriture transactionnelle, rétention) et **retourne** `Squad`/`Statut`/`Detail`.
 - `Invoke-Orchestration` : découvre les squads, boucle (try/catch par squad), journal dans
@@ -61,11 +59,8 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
   `EmailsAdmin`, `TemplatePath`, `MoteurMail`, `Classeur`, `Subject`, `Environnement`,
   `EquipeNom`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `ToleranceCongesJours` (défaut 0),
   et `Nom` (affiché, défaut = nom du dossier).
-- Obligatoires validées par `Test-ConfSquad` (`$script:ClesConfSquad` : `SmtpServer`, `From`,
-  `To`, `TemplatePath`, `EmailsAdmin`) — **présence ET non-vacuité** (`"To": []` refusé, sinon
-  une alerte partirait sans destinataire). Constantes : `$script:NomConfSquad`
-  (`conf-suivi-squad.json`), `$script:NomClasseur`, `$script:FeuillesClasseur` (5 feuilles,
-  exigées à l'exécution ET par `-Action Test`).
+- Obligatoires validées par `$script:ClesConfSquad` (`SmtpServer`, `From`, `To`, `TemplatePath`,
+  `EmailsAdmin`). Constantes : `$script:NomConfSquad` (`conf-suivi-squad.json`), `$script:NomClasseur`.
 - Le **To** des mails de désignation reste **les désignés** ; `To` n'est qu'un **repli** si aucun
   désigné n'a d'adresse. `Cc` vide ⇒ tous les membres actifs. `EmailsAdmin` = alertes de la squad.
 - Clés de **documentation** `_…` (ex. `_commentaire`) tolérées : ignorées par le code et **non
@@ -85,12 +80,6 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
 
 ### Excel = données métier + config squad
 Feuilles `Parametres`, `Membres`, `Congés`, `Historique`, `Log`. **Pas de VBA.**
-**Protection des feuilles** (`Protect-ClasseurSquad`, réappliquée à chaque écriture et posée
-sur le gabarit/exemple) : `Historique`/`Log` verrouillées intégralement ; `Membres` protégée
-avec saisie libre SAUF `Compteur` (col E), en-tête et colonnes inutilisées (insertion de
-lignes OK, suppression bloquée par Excel → cohérent avec `Actif=Non`) ; `Parametres`/`Congés`
-non protégées. **Sans mot de passe** (garde-fou ; ôter la protection pour amorcer le
-`Compteur`, le script la re-pose). EPPlus ignore la protection : le script écrit normalement.
 `Historique` au **format long** : 1 ligne par rôle désigné (`SemaineLundi, Role, Nom,
 Email, DateAnnonce, DateRappel, Statut, Note`). Listes déroulantes : `Rôle` =
 `Parametres!$A$2:$A$50`, `Actif` = Oui/Non, `Congés!Membre` = noms de `Membres`. Lecture
@@ -154,9 +143,7 @@ Le mail d'**annonce** inclut (via `-SectionsInline`) un tableau de **compteurs p
 ### Accès concurrent au classeur
 Verrou applicatif `<squad>\suivi_exploitation.lock` **honoré** : si un verrou est présent et
 récent (< `$script:VerrouStaleMinutes`, 120 min) le traitement de la squad est **abandonné**
-(ERREUR) ; au-delà il est considéré orphelin (process tué), supprimé avec WARN. La pose est
-**exclusive** (`FileMode::CreateNew` : de deux lancements simultanés, un seul acquiert le
-verrou, l'autre abandonne). Le `.lock`
+(ERREUR) ; au-delà il est considéré orphelin (process tué) et ignoré avec WARN. Le `.lock`
 n'est supprimé que par le process qui l'a créé (drapeau `$jaiLeVerrou`). On attend aussi le
 verrou Excel `~$*`. Écriture **transactionnelle** : le résultat est calculé dans un `.tmp`,
 on **copie** l'état courant dans `historique\` puis on **promeut** le `.tmp` (écrasement) —
