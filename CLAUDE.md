@@ -36,15 +36,22 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
 
 ## Organisation du script
 
-`SuiviExploitation.ps1 -Action <Annonce|Rappel|Test|NouvelleSquad>` plus `-DossierRacine`,
-`-Squad` (filtre par nom de dossier / `Nom`). **Plus de `-Config`** : chaque squad porte sa config.
+`SuiviExploitation.ps1 -Action <Annonce|Rappel|Apercu|Rapport|Test|NouvelleSquad>` plus
+`-DossierRacine`, `-Squad` (filtre par nom de dossier / `Nom`, correspondance **exacte** —
+`Select-SquadsParFiltre`). **Plus de `-Config`** : chaque squad porte sa config.
 
 - Outils communs : `Get-Opt`, `ConvertTo-Ht` (JSON → hashtable), `ConvertTo-Liste`,
-  `Resolve-Chemin`, `Resolve-MoteurMail`, `ConvertTo-JsonSafe`, `Send-Notification`.
+  `Resolve-Chemin`, `Resolve-MoteurMail`, `ConvertTo-JsonSafe`, `Send-Notification`,
+  `Get-JoursFeriesFR` (fériés France, Meeus/Butcher), `Test-ConfSquad` (validation
+  présence + non-vacuité des clés).
 - `Get-DossiersSquads` (scan des sous-dossiers) + `Get-ConfSquad` (charge le `conf-suivi-squad.json`
   d'une squad → hashtable). Remplacent l'ancien `Get-Configuration` global.
 - `Invoke-SquadJob` : traite UNE squad (reçoit son dossier + sa config complète ; verrou, lecture,
   désignation, mail, écriture transactionnelle, rétention) et **retourne** `Squad`/`Statut`/`Detail`.
+  Modes `Apercu`/`Rapport` = **lecture seule** (copie de travail en %TEMP%, pas de verrou,
+  rien d'écrit) : `Apercu` affiche en console la désignation prévue/prévision/compteurs,
+  `Rapport` envoie ces mêmes éléments aux `EmailsAdmin` (statut `RAPPORT`, injecté par
+  défaut dans la config moteur s'il manque).
 - `Invoke-Orchestration` : découvre les squads, boucle (try/catch par squad), journal dans
   `_logs\`. **Pas de mail récapitulatif global** (chaque squad alerte ses propres `EmailsAdmin`).
 - `Invoke-Test` : validation par squad. `Get-ConfSquadModele` + `Invoke-NouvelleSquad` : onboarding.
@@ -57,10 +64,16 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
   (`ConvertFrom-Json` → `ConvertTo-Ht`). **Il n'y a pas de `config-suivi.json` global.**
 - Ce fichier est **autonome et complet** : `SmtpServer`, `Port`, `From`, `To`, `Cc`,
   `EmailsAdmin`, `TemplatePath`, `MoteurMail`, `Classeur`, `Subject`, `Environnement`,
-  `EquipeNom`, `Statuses` (DESIGNATION/RAPPEL/ALERTE), `ToleranceCongesJours` (défaut 0),
-  et `Nom` (affiché, défaut = nom du dossier).
-- Obligatoires validées par `$script:ClesConfSquad` (`SmtpServer`, `From`, `To`, `TemplatePath`,
-  `EmailsAdmin`). Constantes : `$script:NomConfSquad` (`conf-suivi-squad.json`), `$script:NomClasseur`.
+  `EquipeNom`, `Statuses` (DESIGNATION/RAPPEL/ALERTE/RAPPORT), `ToleranceCongesJours`
+  (défaut 0), `JoursFeries` (`'FR'` défaut / `'Aucun'`), `SemainesPrevision` (défaut 3,
+  borné 1..12), `AbsencesCsv` (import optionnel d'un CSV d'absences : `Chemin` +
+  `Separateur`/`Encodage`/`ColonneNom`/`ColonneDebut`/`ColonneFin` ; fusion EN MÉMOIRE,
+  noms inconnus filtrés, échec = WARN non bloquant), et `Nom` (affiché, défaut = dossier).
+- Obligatoires validées par `Test-ConfSquad` (`$script:ClesConfSquad` : `SmtpServer`, `From`,
+  `To`, `TemplatePath`, `EmailsAdmin`) — **présence ET non-vacuité** (`"To": []` refusé).
+  Constantes : `$script:NomConfSquad` (`conf-suivi-squad.json`), `$script:NomClasseur`,
+  `$script:FeuillesClasseur` (5 feuilles, exigées à l'exécution ET par `-Action Test` —
+  qui contrôle aussi la **cohérence des congés** : noms connus, dates valides/ordonnées).
 - Le **To** des mails de désignation reste **les désignés** ; `To` n'est qu'un **repli** si aucun
   désigné n'a d'adresse. `Cc` vide ⇒ tous les membres actifs. `EmailsAdmin` = alertes de la squad.
 - Clés de **documentation** `_…` (ex. `_commentaire`) tolérées : ignorées par le code et **non
@@ -98,11 +111,16 @@ désignation la plus ancienne** (ceux qui n'ont **jamais** fait d'abord), 3) `No
 semaine la plus récente trouvée dans l'`Historique` pour la personne ; en repli (pas encore
 d'historique) la graine `DateDernierSuivi` (col D de `Membres`, cf. `Get-DerniereDe`) ; sinon
 jamais désigné (`[DateTime]::MinValue`, priorité absolue).
-**Exclusion congés** : sur la **semaine cible**, exclu si le nb de **jours ouvrés**
-(lundi→vendredi) en congé **dépasse** `ToleranceCongesJours` (feuille `Parametres` C/D en
-priorité, repli sur `conf-suivi-squad.json`, défaut 0 = exclu dès 1 jour ; cf. `Get-NbJoursCongesSemaine`). Le **vendredi précédent**
-(jour de l'annonce) reste une exclusion **stricte** (`Test-MembreEnConges`), non soumise à la
-tolérance. Même logique répliquée dans `Select-Sim` (prévision).
+**Exclusion congés** : congés du classeur + absences CSV importées (cf. `AbsencesCsv`). Sur
+la **semaine cible**, exclu si le nb de **jours ouvrés** (lundi→vendredi) en congé
+**dépasse** `ToleranceCongesJours` (feuille `Parametres` C/D en priorité, repli sur
+`conf-suivi-squad.json`, défaut 0 = exclu dès 1 jour ; cf. `Get-NbJoursCongesSemaine`).
+Pondération : ligne `Demi…` (col D `Type` de `Congés`) = **0,5/jour** (poids max si
+chevauchement) ; un **jour férié** (cf. `Test-JourFerie`) ne compte jamais. Le **vendredi
+précédent** (jour de l'annonce) reste une exclusion **stricte** (`Test-MembreEnConges`),
+non soumise à la tolérance — **neutralisée si ce vendredi est férié**. Même logique
+répliquée dans `Select-Sim` (prévision). Qualité : noms de congés inconnus et dates
+inversées → WARN (dates inversées : échangées).
 **`NB_FOIS` = colonne `Compteur` (col E) = CUMUL VIVANT** : `Get-NbFoisDe` la lit telle quelle ;
 le script l'**incrémente (+1 par désignation) et la réécrit dans `Membres`** (seule colonne
 écrite dans cette feuille), **mais UNIQUEMENT au `Rappel`** : la désignation d'`Annonce`
@@ -141,8 +159,10 @@ lignes de tableau utilise `… += , @(...)` puis `return , $rows` pour ne pas d�
 ligne unique. **Ne pas réintroduire d'aller-retour `ConvertTo-Json`/`ConvertFrom-Json`.**
 
 Le mail d'**annonce** inclut (via `-SectionsInline`) un tableau de **compteurs par rôle**
-(`Get-CompteursRows <Role> <Lundi>`) et la **prévision des 3 prochaines semaines**
-(`Get-PrevisionRows`, 1 colonne par rôle, simulation de l'algo sur copies en mémoire).
+(`Get-CompteursRows <Role> <Lundi>`) et la **prévision des `SemainesPrevision` prochaines
+semaines** (`Get-PrevisionRows`, 1 colonne par rôle, simulation de l'algo sur copies en
+mémoire). Si la prévision montre `(aucun disponible)` pour un rôle, une **alerte
+préventive de couverture** part aux `EmailsAdmin` (envoi non bloquant, annonce seulement).
 **Règle d'affichage des compteurs** : une personne indisponible pour la semaine cible
 (inactive, ou en congé au-delà de la tolérance / le vendredi de passation) ne doit **jamais**
 apparaître en tête du tableau, même avec le compteur le plus bas — les désignables d'abord,
