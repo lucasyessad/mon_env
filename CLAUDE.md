@@ -13,7 +13,8 @@ partage réseau. **Pas de build ni de tests automatisés** : la validation se fa
 `-Action Test` et des exécutions manuelles `Annonce`/`Rappel`.
 
 Tout le code vit dans `suiviexploit/`. La référence fonctionnelle est
-`suiviexploit/README.md` — **à consulter avant toute modification de comportement.**
+`docs/Confluence-Suivi-Exploitation.md` (documentation technico-fonctionnelle) —
+**à consulter avant toute modification de comportement.**
 
 ## Structure
 
@@ -23,9 +24,7 @@ suiviexploit/
 ├── SendMailNotificationHTML.ps1     moteur d'envoi HTML (dépendance partagée, NON modifiée)
 ├── template-notification.html       gabarit HTML des mails (partagé)
 ├── suivi_exploitation_template.xlsx gabarit d'un classeur de squad
-├── suivi_exploitation_exemple.xlsx  exemple rempli
-├── conf-suivi-squad.exemple.json    exemple COMPLET de config d'une squad (sans commentaires : doc = README)
-└── README.md                        guide d'installation/exploitation
+└── conf-suivi-squad.exemple.json    exemple COMPLET de config d'une squad (sans commentaires)
 ```
 
 **Pas de config globale.** Déploiement : ces fichiers partagés à la racine ; puis **un dossier
@@ -186,7 +185,8 @@ pas de fenêtre où le classeur a disparu si la promotion échoue.
 - **Style** : commentaires réduits au **strict minimum** — une ligne sur les seuls
   invariants piégeux (émetteur JSON maison, déballage des tableaux, compteur au Rappel,
   verrou exclusif, promotion transactionnelle). **Tout le fonctionnel est documenté dans
-  le README**, ne pas le dupliquer dans le code ni dans l'exemple de config.
+  `docs/Confluence-Suivi-Exploitation.md`**, ne pas le dupliquer dans le code ni dans
+  l'exemple de config.
 - **Encodage** : `SuiviExploitation.ps1` en **UTF-8 avec BOM** (accents sous PS 5.1) ; les
   `conf-suivi-squad.json` en **UTF-8** (BOM recommandé). **Conserver le BOM** lors des éditions
   (les outils peuvent le retirer — vérifier après coup). Le moteur `SendMailNotificationHTML.ps1`
