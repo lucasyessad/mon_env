@@ -83,7 +83,11 @@ Feuilles `Parametres`, `Membres`, `Congés`, `Historique`, `Log`. **Pas de VBA.*
 `Historique` au **format long** : 1 ligne par rôle désigné (`SemaineLundi, Role, Nom,
 Email, DateAnnonce, DateRappel, Statut, Note`). Listes déroulantes : `Rôle` =
 `Parametres!$A$2:$A$50`, `Actif` = Oui/Non, `Congés!Membre` = noms de `Membres`. Lecture
-tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures encadrées par `@(...)`.
+tolérante : `ConvertTo-DateOuNull` / `ConvertTo-IntOuZero` ; lectures encadrées par `@(...)` ;
+parcours jusqu'à la **fin de zone utilisée** (`Dimension.End.Row`, lignes vides intercalées
+ignorées — un congé « effacé » ne masque plus la suite) ; noms **nettoyés** (`.Trim()`) dans
+Membres, Congés et Historique (l'ajout dans Historique/Log se fait donc en fin de zone, pas
+au premier emplacement vide).
 
 ### Désignation (par rôle)
 Pour chaque rôle de `Parametres`, on désigne 1 personne : candidats actifs du rôle →
@@ -137,8 +141,13 @@ lignes de tableau utilise `… += , @(...)` puis `return , $rows` pour ne pas d�
 ligne unique. **Ne pas réintroduire d'aller-retour `ConvertTo-Json`/`ConvertFrom-Json`.**
 
 Le mail d'**annonce** inclut (via `-SectionsInline`) un tableau de **compteurs par rôle**
-(`Get-CompteursRows <Role>`) et la **prévision des 3 prochaines semaines**
+(`Get-CompteursRows <Role> <Lundi>`) et la **prévision des 3 prochaines semaines**
 (`Get-PrevisionRows`, 1 colonne par rôle, simulation de l'algo sur copies en mémoire).
+**Règle d'affichage des compteurs** : une personne indisponible pour la semaine cible
+(inactive, ou en congé au-delà de la tolérance / le vendredi de passation) ne doit **jamais**
+apparaître en tête du tableau, même avec le compteur le plus bas — les désignables d'abord,
+puis les indisponibles annotées « (en congé) ». L'exclusion congés s'applique donc PARTOUT :
+désignation, prévision (`Select-Sim`) ET affichage des compteurs.
 
 ### Accès concurrent au classeur
 Verrou applicatif `<squad>\suivi_exploitation.lock` **honoré** : si un verrou est présent et
