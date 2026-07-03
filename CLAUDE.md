@@ -85,6 +85,12 @@ le log d'orchestration **et** le journal daté de chaque squad (`_logs\<squad>_<
 
 ### Excel = données métier + config squad
 Feuilles `Parametres`, `Membres`, `Congés`, `Historique`, `Log`. **Pas de VBA.**
+**Protection des feuilles** (`Protect-ClasseurSquad`, réappliquée à chaque écriture et posée
+sur le gabarit/exemple) : `Historique`/`Log` verrouillées intégralement ; `Membres` protégée
+avec saisie libre SAUF `Compteur` (col E), en-tête et colonnes inutilisées (insertion de
+lignes OK, suppression bloquée par Excel → cohérent avec `Actif=Non`) ; `Parametres`/`Congés`
+non protégées. **Sans mot de passe** (garde-fou ; ôter la protection pour amorcer le
+`Compteur`, le script la re-pose). EPPlus ignore la protection : le script écrit normalement.
 `Historique` au **format long** : 1 ligne par rôle désigné (`SemaineLundi, Role, Nom,
 Email, DateAnnonce, DateRappel, Statut, Note`). Listes déroulantes : `Rôle` =
 `Parametres!$A$2:$A$50`, `Actif` = Oui/Non, `Congés!Membre` = noms de `Membres`. Lecture
