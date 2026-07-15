@@ -304,7 +304,7 @@ h1.noms .et{
 /* lisibilité des écritures sur la photo */
 
 
-/* roses aquarelle de coin */
+/* arums aquarelle de coin */
 .coin{
   position:absolute;width:112px;height:112px;pointer-events:none;
   filter:drop-shadow(0 1.3px .7px rgba(255,255,255,.9)) drop-shadow(0 -1px .9px rgba(110,90,50,.26));
@@ -534,87 +534,72 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 <div id="grain" aria-hidden="true"></div>
 <div id="cadre" aria-hidden="true"></div>
 
-<!-- rose aquarelle + brin réutilisables -->
+<!-- bibliothèque florale réutilisable (arums) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <!-- ===== bibliothèque florale réaliste ===== -->
+    <!-- ===== bibliothèque florale : arums, verdure, gypsophile ===== -->
     <radialGradient id="gr-petale" cx="50%" cy="32%" r="75%">
       <stop offset="0" stop-color="#FEFBF2"/>
       <stop offset=".55" stop-color="#F2E7CC"/>
       <stop offset="1" stop-color="#DBC7A2"/>
     </radialGradient>
-    <radialGradient id="gr-petale-rose" cx="50%" cy="32%" r="75%">
-      <stop offset="0" stop-color="#FBF0E8"/>
-      <stop offset=".55" stop-color="#EFD3C2"/>
-      <stop offset="1" stop-color="#DBAF98"/>
-    </radialGradient>
-    <linearGradient id="gr-feuille" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#D8D4B4"/>
-      <stop offset="1" stop-color="#B3B08D"/>
+    <linearGradient id="gr-spadice" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8CC72"/>
+      <stop offset="1" stop-color="#C9A648"/>
     </linearGradient>
 
-    <!-- pétale unitaire (base au centre 40,40 ; pointe vers le haut) -->
-    <path id="ptl" d="M40 40 C31 31 29 17 40 9 C51 17 49 31 40 40 Z"/>
-
-    <!-- rose champagne, vue de dessus -->
-    <g id="rose-vraie">
-      <g fill="url(#gr-petale)" stroke="rgba(150,126,84,.18)" stroke-width=".5">
-        <use href="#ptl"/>
-        <use href="#ptl" transform="rotate(60 40 40)"/>
-        <use href="#ptl" transform="rotate(120 40 40)"/>
-        <use href="#ptl" transform="rotate(180 40 40)"/>
-        <use href="#ptl" transform="rotate(240 40 40)"/>
-        <use href="#ptl" transform="rotate(300 40 40)"/>
-      </g>
-      <g fill="url(#gr-petale)" stroke="rgba(150,126,84,.2)" stroke-width=".45"
-         transform="rotate(30 40 40) translate(40 40) scale(.64) translate(-40 -40)">
-        <use href="#ptl"/>
-        <use href="#ptl" transform="rotate(72 40 40)"/>
-        <use href="#ptl" transform="rotate(144 40 40)"/>
-        <use href="#ptl" transform="rotate(216 40 40)"/>
-        <use href="#ptl" transform="rotate(288 40 40)"/>
-      </g>
-      <circle cx="40" cy="40" r="6.6" fill="#EBDCB9" stroke="rgba(150,126,84,.35)" stroke-width=".6"/>
-      <path d="M40 34.6 a5.4 5.4 0 1 1 -5.4 5.4 a3.4 3.4 0 1 0 3.4 -3.4 a1.6 1.6 0 1 1 -1.6 1.6"
-            fill="none" stroke="rgba(140,116,74,.5)" stroke-width=".9" stroke-linecap="round"/>
+    <!-- arum de trois quarts (boîte 80x80) -->
+    <g id="calla-a">
+      <path d="M36 64 C35 68 35 72 36 76" fill="none" stroke="#93A07E" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M36 64 C22 56 12 40 13 26 C14 15 19 9 24 7 C22 16 24 26 30 36 C24 24 26 12 34 10 C46 7 60 16 62 30 C64 45 52 60 36 64 Z"
+            fill="url(#gr-petale)" stroke="rgba(150,126,84,.38)" stroke-width=".9"/>
+      <path d="M30 36 C28 24 29 14 34 10 C45 8 57 17 59 29 C61 41 52 54 38 60 C32 52 30 44 30 36 Z"
+            fill="#F3EAD3" stroke="rgba(150,126,84,.22)" stroke-width=".6"/>
+      <path d="M37 46 C36 38 36 30 38 23 C38.8 20.4 41.6 20.6 42 23.2 C43 31 42.6 39 41.4 46.6 C40 48.8 38.2 48.6 37 46 Z"
+            fill="url(#gr-spadice)" stroke="rgba(140,110,60,.4)" stroke-width=".5"/>
+      <path d="M56 22 C60 32 59 44 51 54 M20 30 C22 42 28 54 36 62"
+            fill="none" stroke="rgba(150,126,84,.22)" stroke-width=".7"/>
     </g>
 
-    <!-- rose rosée -->
-    <g id="rose-vraie-rose">
-      <g fill="url(#gr-petale-rose)" stroke="rgba(170,120,96,.2)" stroke-width=".5">
-        <use href="#ptl"/>
-        <use href="#ptl" transform="rotate(60 40 40)"/>
-        <use href="#ptl" transform="rotate(120 40 40)"/>
-        <use href="#ptl" transform="rotate(180 40 40)"/>
-        <use href="#ptl" transform="rotate(240 40 40)"/>
-        <use href="#ptl" transform="rotate(300 40 40)"/>
-      </g>
-      <g fill="url(#gr-petale-rose)" stroke="rgba(170,120,96,.22)" stroke-width=".45"
-         transform="rotate(30 40 40) translate(40 40) scale(.64) translate(-40 -40)">
-        <use href="#ptl"/>
-        <use href="#ptl" transform="rotate(72 40 40)"/>
-        <use href="#ptl" transform="rotate(144 40 40)"/>
-        <use href="#ptl" transform="rotate(216 40 40)"/>
-        <use href="#ptl" transform="rotate(288 40 40)"/>
-      </g>
-      <circle cx="40" cy="40" r="6.2" fill="#EFCDBB" stroke="rgba(170,120,96,.38)" stroke-width=".6"/>
-      <path d="M40 34.8 a5.2 5.2 0 1 1 -5.2 5.2 a3.2 3.2 0 1 0 3.2 -3.2"
-            fill="none" stroke="rgba(160,104,80,.5)" stroke-width=".9" stroke-linecap="round"/>
+    <!-- arum de profil (boîte 80x80, bec vers la gauche) -->
+    <g id="calla-b">
+      <path d="M46 62 C46 67 46 71 47 75" fill="none" stroke="#93A07E" stroke-width="2" stroke-linecap="round"/>
+      <path d="M46 62 C34 56 22 44 15 30 C11 22 12 15 16 12 C20 10 26 12 32 18 C28 12 30 8 34 8 C42 9 50 20 53 32 C56 44 53 56 46 62 Z"
+            fill="url(#gr-petale)" stroke="rgba(150,126,84,.38)" stroke-width=".9"/>
+      <path d="M32 18 C38 24 44 34 47 46 C49 52 48 57 46 60"
+            fill="none" stroke="rgba(150,126,84,.28)" stroke-width=".7"/>
+      <path d="M16 12 C21 11 28 15 32 20 C28 22 22 20 18 16 Z"
+            fill="#F3EAD3" stroke="rgba(150,126,84,.2)" stroke-width=".5"/>
+      <path d="M18 14 C14 10 10 7 6 6 C4.6 7.8 5 9.4 7 10.4 C11 12 15 14.6 17.6 16.6 Z"
+            fill="url(#gr-spadice)" stroke="rgba(140,110,60,.4)" stroke-width=".5"/>
+      <path d="M20 20 C30 28 40 40 46 52" fill="none" stroke="rgba(150,126,84,.2)" stroke-width=".65"/>
     </g>
 
-    <!-- feuille nervurée -->
-    <g id="feuille-vraie">
-      <path d="M0 0 C9 -9 25 -10 36 -2 C25 8 9 8 0 0 Z" fill="url(#gr-feuille)" stroke="rgba(120,118,86,.28)" stroke-width=".55"/>
-      <path d="M2 0 C13 -2 24 -2 33 -1.6" fill="none" stroke="rgba(110,108,78,.5)" stroke-width=".7"/>
-      <path d="M9 -1.8 L12 -5 M16 -2 L20 -6 M23 -2 L27 -5 M10 -1 L13 2.6 M17 -1 L21 3 M24 -1 L28 2.4"
-            fill="none" stroke="rgba(110,108,78,.35)" stroke-width=".55"/>
+    <!-- fronde plumeuse (base à l'origine, s'étend vers la droite) -->
+    <g id="verdure" fill="none" stroke-linecap="round">
+      <path d="M0 0 C10 -3 24 -3 36 -1" stroke="#A9B18C" stroke-width=".8"/>
+      <g stroke="#B4BF9E" stroke-width=".7">
+        <path d="M4 -1 C2 -3.4 1.6 -6.6 3.4 -9.6 M4 -1 C3 1.6 3.6 4.4 5.6 6.4"/>
+        <path d="M8 -1.8 C6.4 -4.4 6.4 -7.6 8.6 -10.2 M8 -1.8 C7.2 1 8.2 3.8 10.2 5.6"/>
+        <path d="M12 -2.3 C10.8 -5 11.2 -8 13.6 -10.4 M12 -2.3 C11.4 .4 12.6 3 14.6 4.8"/>
+        <path d="M16 -2.6 C15 -5.2 15.6 -8 18 -10 M16 -2.6 C15.6 -.2 16.8 2.2 18.8 3.8"/>
+        <path d="M20 -2.8 C19.2 -5.2 20 -7.6 22.4 -9.2 M20 -2.8 C19.8 -.6 21 1.4 23 2.8"/>
+        <path d="M24 -2.8 C23.4 -5 24.4 -7 26.6 -8.2 M24 -2.8 C24 -.8 25.2 .8 27 2"/>
+        <path d="M28 -2.6 C27.6 -4.4 28.8 -6.2 30.6 -7 M28 -2.6 C28.2 -1 29.4 .4 31 1.2"/>
+        <path d="M32 -2.2 C31.8 -3.8 33 -5.2 34.6 -5.8 M32 -2.2 C32.4 -.9 33.4 .1 34.8 .7"/>
+      </g>
+      <g stroke="#93A07E" stroke-width=".5">
+        <path d="M3.4 -9.6 C3 -10.8 3.2 -12 4 -13 M8.6 -10.2 C8.4 -11.6 8.8 -12.8 9.8 -13.8 M13.6 -10.4 C13.6 -11.8 14.2 -13 15.2 -13.8"/>
+        <path d="M5.6 6.4 C6.2 7.6 7.2 8.4 8.4 8.8 M10.2 5.6 C10.8 6.8 11.8 7.6 13 8"/>
+      </g>
     </g>
 
-    <!-- bouton de rose avec sépales -->
-    <g id="bouton-vrai">
-      <path d="M0 14 C-1 6 -4 2 -3 -4 C-1 -10 5 -12 8 -8 C11 -4 9 4 4 9 Z" fill="url(#gr-petale-rose)" stroke="rgba(170,120,96,.35)" stroke-width=".6"/>
-      <path d="M3 -9 C4 -3 3 4 0 11" fill="none" stroke="rgba(170,120,96,.4)" stroke-width=".55"/>
-      <path d="M0 14 C-4 10 -5 4 -4 -1 M0 14 C4 11 7 6 7 0" fill="none" stroke="#A8A57F" stroke-width="1"/>
+    <!-- bouton d'arum roulé -->
+    <g id="calla-bouton">
+      <path d="M0 14 C-3 6 -3 -4 1 -12 C7 -7 7 3 3 11 Z"
+            fill="url(#gr-petale)" stroke="rgba(150,126,84,.4)" stroke-width=".6"/>
+      <path d="M1 -10 C3 -3 3 5 1.6 12" fill="none" stroke="rgba(150,126,84,.35)" stroke-width=".55"/>
+      <path d="M0 14 C-1 17 -1 20 0 23" fill="none" stroke="#A8A57F" stroke-width="1.4" stroke-linecap="round"/>
     </g>
 
     <!-- gypsophile -->
@@ -625,7 +610,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       <circle cx="2" cy="4" r="1.1" fill="#F7F1E0" stroke="rgba(150,126,84,.2)" stroke-width=".4"/>
     </g>
 
-    <g id="rose-coin">
+    <g id="coin-fleuri">
       <!-- tiges depuis le coin -->
       <g fill="none" stroke="#AFAC87" stroke-width="1.1" stroke-linecap="round">
         <path d="M6 6 C22 22 38 36 58 48"/>
@@ -633,16 +618,16 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
         <path d="M14 6 C34 16 54 22 76 24"/>
       </g>
       <!-- feuillage nervuré -->
-      <use href="#feuille-vraie" transform="translate(28 34) rotate(38) scale(.62)"/>
-      <use href="#feuille-vraie" transform="translate(22 52) rotate(66) scale(.55)"/>
-      <use href="#feuille-vraie" transform="translate(46 16) rotate(8) scale(.55)"/>
+      <use href="#verdure" transform="translate(28 34) rotate(38) scale(.62)"/>
+      <use href="#verdure" transform="translate(22 52) rotate(66) scale(.55)"/>
+      <use href="#verdure" transform="translate(46 16) rotate(8) scale(.55)"/>
       <!-- bouton et gypsophile -->
-      <use href="#bouton-vrai" transform="translate(58 66) rotate(42) scale(.8)"/>
+      <use href="#calla-bouton" transform="translate(58 66) rotate(42) scale(.8)"/>
       <use href="#gypso" transform="translate(78 30) scale(.8)"/>
       <use href="#gypso" transform="translate(44 76) scale(.7)"/>
-      <!-- roses -->
-      <use href="#rose-vraie" transform="translate(10 8) scale(.66)"/>
-      <use href="#rose-vraie-rose" transform="translate(48 40) scale(.44)"/>
+      <!-- arums -->
+      <use href="#calla-a" transform="translate(8 4) scale(.66)"/>
+      <use href="#calla-b" transform="translate(48 40) scale(.44)"/>
     </g>
     <g id="sep-anneaux" fill="none" stroke-linecap="round" stroke-width="1.2">
       <g stroke="rgba(120,100,60,.32)" transform="translate(0,-0.8)">
@@ -663,26 +648,26 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
         <path d="M10 146 C30 122 46 100 74 84"/>
         <path d="M16 146 C44 132 72 122 104 118"/>
       </g>
-      <use href="#feuille-vraie" transform="translate(38 118) rotate(-32)"/>
-      <use href="#feuille-vraie" transform="translate(64 128) rotate(-6) scale(.85)"/>
-      <use href="#feuille-vraie" transform="translate(52 96) rotate(-52) scale(.72)"/>
-      <use href="#bouton-vrai" transform="translate(108 114) rotate(38)"/>
+      <use href="#verdure" transform="translate(38 118) rotate(-32)"/>
+      <use href="#verdure" transform="translate(64 128) rotate(-6) scale(.85)"/>
+      <use href="#verdure" transform="translate(52 96) rotate(-52) scale(.72)"/>
+      <use href="#calla-bouton" transform="translate(108 114) rotate(38)"/>
       <use href="#gypso" transform="translate(96 90)"/>
       <use href="#gypso" transform="translate(126 128) scale(.8)"/>
-      <use href="#rose-vraie" transform="translate(48 44) scale(1.06)"/>
-      <use href="#rose-vraie-rose" transform="translate(96 60) scale(.7)"/>
+      <use href="#calla-a" transform="translate(48 44) scale(1.06)"/>
+      <use href="#calla-b" transform="translate(96 60) scale(.7)"/>
     </g>
     <g id="guirlande">
       <path d="M10 26 C50 16 130 16 170 26" fill="none" stroke="#AFAC87" stroke-width="1.1" stroke-linecap="round"/>
-      <use href="#feuille-vraie" transform="translate(26 24) rotate(-16) scale(.5)"/>
-      <use href="#feuille-vraie" transform="translate(154 24) rotate(196) scale(.5 -.5)"/>
-      <use href="#feuille-vraie" transform="translate(62 19) rotate(-8) scale(.42)"/>
-      <use href="#feuille-vraie" transform="translate(118 19) rotate(188) scale(.42 -.42)"/>
+      <use href="#verdure" transform="translate(26 24) rotate(-16) scale(.5)"/>
+      <use href="#verdure" transform="translate(154 24) rotate(196) scale(.5 -.5)"/>
+      <use href="#verdure" transform="translate(62 19) rotate(-8) scale(.42)"/>
+      <use href="#verdure" transform="translate(118 19) rotate(188) scale(.42 -.42)"/>
       <use href="#gypso" transform="translate(18 20) scale(.62)"/>
       <use href="#gypso" transform="translate(162 20) scale(-.62 .62)"/>
-      <use href="#rose-vraie-rose" transform="translate(39.4 10.6) scale(.27)"/>
-      <use href="#rose-vraie-rose" transform="translate(119.4 10.6) scale(.27)"/>
-      <use href="#rose-vraie" transform="translate(75.2 1.6) scale(.37)"/>
+      <use href="#calla-b" transform="translate(39.4 10.6) scale(.27)"/>
+      <use href="#calla-b" transform="translate(119.4 10.6) scale(.27)"/>
+      <use href="#calla-a" transform="translate(75.2 1.6) scale(.37)"/>
     </g>
   </defs>
 </svg>
@@ -749,28 +734,28 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
         <path d="M200 96 C204 118 210 136 222 150"/>
       </g>
       <!-- feuillage -->
-      <use href="#feuille-vraie" transform="translate(138 100) rotate(-18)"/>
-      <use href="#feuille-vraie" transform="translate(262 100) rotate(198) scale(1 -1)"/>
-      <use href="#feuille-vraie" transform="translate(172 128) rotate(52) scale(.8)"/>
-      <use href="#feuille-vraie" transform="translate(228 128) rotate(128) scale(.8 1)"/>
-      <use href="#feuille-vraie" transform="translate(150 70) rotate(-44) scale(.72)"/>
-      <use href="#feuille-vraie" transform="translate(250 70) rotate(224) scale(.72 -.72)"/>
+      <use href="#verdure" transform="translate(138 100) rotate(-18)"/>
+      <use href="#verdure" transform="translate(262 100) rotate(198) scale(1 -1)"/>
+      <use href="#verdure" transform="translate(172 128) rotate(52) scale(.8)"/>
+      <use href="#verdure" transform="translate(228 128) rotate(128) scale(.8 1)"/>
+      <use href="#verdure" transform="translate(150 70) rotate(-44) scale(.72)"/>
+      <use href="#verdure" transform="translate(250 70) rotate(224) scale(.72 -.72)"/>
       <!-- boutons -->
-      <use href="#bouton-vrai" transform="translate(118 96) rotate(-24)"/>
-      <use href="#bouton-vrai" transform="translate(282 96) rotate(24) scale(-1 1)"/>
-      <use href="#bouton-vrai" transform="translate(178 148) rotate(-8) scale(.85)"/>
-      <use href="#bouton-vrai" transform="translate(222 148) rotate(8) scale(-.85 .85)"/>
+      <use href="#calla-bouton" transform="translate(118 96) rotate(-24)"/>
+      <use href="#calla-bouton" transform="translate(282 96) rotate(24) scale(-1 1)"/>
+      <use href="#calla-bouton" transform="translate(178 148) rotate(-8) scale(.85)"/>
+      <use href="#calla-bouton" transform="translate(222 148) rotate(8) scale(-.85 .85)"/>
       <!-- gypsophile -->
       <use href="#gypso" transform="translate(104 74)"/>
       <use href="#gypso" transform="translate(296 74) scale(-1 1)"/>
       <use href="#gypso" transform="translate(156 138) scale(.85)"/>
       <use href="#gypso" transform="translate(244 138) scale(-.85 .85)"/>
-      <!-- roses : la reine au centre, dames de compagnie autour -->
-      <use href="#rose-vraie-rose" transform="translate(112 26) scale(.78)"/>
-      <use href="#rose-vraie-rose" transform="translate(226 26) scale(.78)"/>
-      <use href="#rose-vraie" transform="translate(96 48) scale(1.02)"/>
-      <use href="#rose-vraie" transform="translate(222 48) scale(1.02)"/>
-      <use href="#rose-vraie" transform="translate(158 8) scale(1.42)"/>
+      <!-- arums : la reine au centre, dames de compagnie autour -->
+      <use href="#calla-b" transform="translate(112 26) scale(.78)"/>
+      <use href="#calla-b" transform="translate(226 26) scale(.78)"/>
+      <use href="#calla-a" transform="translate(96 48) scale(1.02)"/>
+      <use href="#calla-a" transform="translate(222 48) scale(1.02)"/>
+      <use href="#calla-a" transform="translate(158 8) scale(1.42)"/>
     </svg>
   </div>
 
@@ -784,10 +769,10 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 <!-- ========== 1. COUVERTURE (avec photo) ========== -->
 <section class="page courante immersif" style="justify-content:flex-end;padding-bottom:76px;background:var(--creme)">
   <div class="fond-couple img-couple" aria-hidden="true"></div>
-  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin hd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
+  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin hd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
   <div class="eyebrow el e1" style="letter-spacing:.6em;padding-left:.6em">Nous vous invitons</div>
   <p class="italique el e2" style="margin-top:14px;font-size:clamp(15px,4.2vw,18px)">à notre mariage</p>
   <h1 class="noms el e2">Lounis <span class="et">&amp;</span> Kenza</h1>
@@ -797,8 +782,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 
 <!-- ========== 2. INVITATION ========== -->
 <section class="page fond-creme2">
-  <svg class="coin hd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
+  <svg class="coin hd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
   <div class="chapitre el e1">L’invitation</div>
   <h2 class="sr-live">L’invitation</h2>
   <p class="el e2" style="font-style:italic;font-size:clamp(22px,6vw,30px);line-height:1.55;max-width:24ch">
@@ -813,8 +798,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 <!-- ========== 3. PUTEAUX ========== -->
 <section class="page immersif">
   <div class="fond-lieu fond-mairie" aria-hidden="true"></div>
-  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
+  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
   <div class="chapitre el e1">Chapitre I · France</div>
   <h2 class="titre el e1">La cérémonie civile</h2>
   <svg class="brin-haut el e2" viewBox="0 0 180 36" aria-hidden="true"><use href="#guirlande"/></svg>
@@ -832,8 +817,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 
 <!-- ========== 4. SIDI FREDJ ========== -->
 <section class="page fond-creme2">
-  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
+  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
   <div class="chapitre el e1">Chapitre II · Algérie</div>
   <h2 class="titre el e1">La fête à Alger</h2>
   <svg class="brin-haut el e2" viewBox="0 0 180 36" aria-hidden="true"><use href="#guirlande"/></svg>
@@ -851,8 +836,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 
 <!-- ========== 5. TIZI-OUZOU ========== -->
 <section class="page">
-  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
+  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
   <div class="chapitre el e1">Chapitre III · Algérie</div>
   <h2 class="titre el e1">La fête à Tizi-Ouzou</h2>
   <svg class="brin-haut el e2" viewBox="0 0 180 36" aria-hidden="true"><use href="#guirlande"/></svg>
@@ -871,10 +856,10 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 <!-- ========== 6. ÉPILOGUE + RSVP ========== -->
 <section class="page page-form fond-creme2">
   <div class="defiler">
-  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin hd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
-  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#rose-coin"/></svg>
+  <svg class="coin hg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin hd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
+  <svg class="coin bd" viewBox="0 0 100 100" aria-hidden="true"><use href="#coin-fleuri"/></svg>
   <div class="chapitre el e1">Épilogue</div>
   <h2 class="el e1 gaufre" style="font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(38px,9.4vw,52px);line-height:1.2">À très vite</h2>
   <svg class="el e1" width="150" height="18" viewBox="0 0 150 18" aria-hidden="true" style="margin-top:4px"><use href="#sep-anneaux"/></svg>
