@@ -428,8 +428,8 @@ h1.noms .et{
 .formulaire::before{content:"";position:absolute;inset:7px;border:1px solid rgba(194,165,103,.28);pointer-events:none}
 .champ{margin-bottom:20px}
 .champ label,.champ .etiquette{
-  display:block;font-family:'Jost',sans-serif;font-weight:300;font-size:10.5px;
-  letter-spacing:.28em;text-transform:uppercase;color:var(--or-t);margin-bottom:8px;
+  display:block;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+  font-size:19px;letter-spacing:.02em;color:var(--encre);margin-bottom:8px;
 }
 .champ input[type=text],.champ input[type=number],.champ textarea{
   width:100%;background:transparent;border:none;border-bottom:1px solid var(--sauge-f);
@@ -630,14 +630,17 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 
 <!-- ========== 2. INVITATION ========== -->
 <section class="page fond-creme2">
-  <div class="chapitre el e1">L’invitation</div>
-  <h2 class="sr-live">L’invitation</h2>
+  <div class="chapitre el e1">Prologue</div>
+  <h2 class="sr-live">Prologue</h2>
   <p class="el e2" style="font-style:italic;font-size:clamp(22px,6vw,30px);line-height:1.55;max-width:24ch">
     Entourés de nos familles, nous avons l’immense joie de vous convier à la célébration de notre union.
   </p>
   <div class="sep el e3"><svg viewBox="0 0 16 16"><path d="M8 2.4 a5.2 5.2 0 1 1 -5.2 5.2 a3.3 3.3 0 1 0 3.3 -3.3 a1.7 1.7 0 1 1 -1.7 1.7" fill="none" stroke="#C2A567" stroke-width="1.15" stroke-linecap="round"/></svg></div>
-  <p class="italique el e3" style="max-width:30ch;font-size:clamp(15px,4.2vw,18px)">
-    Nous célébrerons notre union à Paris, puis au pays.<br>Venez pour une fête, venez pour toutes — mais venez.
+  <p class="italique el e3" style="max-width:34ch;font-size:clamp(15px,4.2vw,18px);line-height:1.7">
+    Notre « oui » se dira à Puteaux,<br>
+    se fêtera face à la mer d’Alger,<br>
+    et se dansera au cœur de la Kabylie.<br>
+    Venez pour une fête, venez pour toutes — mais venez.
   </p>
 </section>
 
@@ -646,6 +649,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   <div class="fond-lieu fond-mairie" aria-hidden="true"></div>
   <div class="chapitre el e1">Chapitre I · France</div>
   <h2 class="titre el e1">La cérémonie civile</h2>
+  <p class="italique el e2" style="margin-top:6px;font-size:clamp(14px,3.9vw,16.5px)">Notre premier « oui », entourés des nôtres.</p>
   <div class="brin-haut el e2" aria-hidden="true"></div>
   <div class="carte-ev el e2">
     <div class="quand-ev">Samedi</div>
@@ -664,6 +668,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   <div class="fond-lieu fond-darelrais" aria-hidden="true"></div>
   <div class="chapitre el e1">Chapitre II · Algérie</div>
   <h2 class="titre el e1">La fête à Alger</h2>
+  <p class="italique el e2" style="margin-top:6px;font-size:clamp(14px,3.9vw,16.5px)">Puis la fête s’ouvre au pays, face à la mer.</p>
   <div class="brin-haut el e2" aria-hidden="true"></div>
   <div class="carte-ev el e2">
     <div class="quand-ev">Vendredi</div>
@@ -682,6 +687,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   <div class="fond-lieu fond-tizi" aria-hidden="true"></div>
   <div class="chapitre el e1">Chapitre III · Algérie</div>
   <h2 class="titre el e1">La fête à Tizi-Ouzou</h2>
+  <p class="italique el e2" style="margin-top:6px;font-size:clamp(14px,3.9vw,16.5px)">Et s’achève en musique, au pied du Djurdjura.</p>
   <div class="brin-haut el e2" aria-hidden="true"></div>
   <div class="carte-ev el e2">
     <div class="quand-ev">Samedi</div>
@@ -722,17 +728,17 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       <div class="tbl-rsvp">
         <div class="tbl-entete"><span style="text-align:left;padding-left:12px">Célébration</span><span>Présent</span><span>Absent</span></div>
         <div class="tbl-ligne">
-          <div class="tbl-ev"><b>Puteaux</b><span>Sam. 12 sept. · 14h</span></div>
+          <div class="tbl-ev"><b>Puteaux</b><span>Sam. 12 sept. · 14&nbsp;h</span></div>
           <label class="tbl-choix"><input type="radio" name="ev-puteaux" value="Présent" aria-label="Présent à Puteaux le 12 septembre"></label>
           <label class="tbl-choix"><input type="radio" name="ev-puteaux" value="Absent" aria-label="Absent à Puteaux le 12 septembre"></label>
         </div>
         <div class="tbl-ligne">
-          <div class="tbl-ev"><b>Sidi Fredj</b><span>Ven. 2 oct. · 14h</span></div>
+          <div class="tbl-ev"><b>Sidi Fredj</b><span>Ven. 2 oct. · 14&nbsp;h</span></div>
           <label class="tbl-choix"><input type="radio" name="ev-sidifredj" value="Présent" aria-label="Présent à Sidi Fredj le 2 octobre"></label>
           <label class="tbl-choix"><input type="radio" name="ev-sidifredj" value="Absent" aria-label="Absent à Sidi Fredj le 2 octobre"></label>
         </div>
         <div class="tbl-ligne">
-          <div class="tbl-ev"><b>Tizi-Ouzou</b><span>Sam. 3 oct. · 17h</span></div>
+          <div class="tbl-ev"><b>Tizi-Ouzou</b><span>Sam. 3 oct. · 17&nbsp;h</span></div>
           <label class="tbl-choix"><input type="radio" name="ev-tizi" value="Présent" aria-label="Présent à Tizi-Ouzou le 3 octobre"></label>
           <label class="tbl-choix"><input type="radio" name="ev-tizi" value="Absent" aria-label="Absent à Tizi-Ouzou le 3 octobre"></label>
         </div>
