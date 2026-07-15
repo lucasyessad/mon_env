@@ -194,6 +194,34 @@ body.ouverte{cursor:pointer}
   opacity:0;filter:blur(3px);
 }
 
+/* carte monogrammée qui sort de l'enveloppe */
+#carte-sortie{
+  position:absolute;left:50%;top:50%;z-index:2;
+  width:min(62vw,290px);aspect-ratio:29/40;
+  transform:translate(-50%,-8%) scale(.94);opacity:0;pointer-events:none;
+  background:linear-gradient(178deg,#FFFEF9,#FBF6E9);
+  border:1px solid rgba(194,165,103,.55);
+  box-shadow:0 22px 52px rgba(100,84,52,.22), 0 4px 12px rgba(100,84,52,.1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+#carte-sortie::before{content:"";position:absolute;inset:8px;border:1px solid rgba(194,165,103,.32)}
+#carte-sortie b{
+  font-family:'Pinyon Script',cursive;font-weight:400;font-size:56px;line-height:1;
+  color:#96803F;text-shadow:0 1.5px 1px rgba(255,255,255,.9), 0 -1px 1px rgba(105,85,40,.3);
+}
+#carte-sortie i{
+  font-style:normal;font-family:'Jost',sans-serif;font-weight:300;font-size:10px;
+  letter-spacing:.4em;text-transform:uppercase;color:var(--or-t);padding-left:.4em;
+}
+#scene-env.e3 #carte-sortie{
+  opacity:1;transform:translate(-50%,-62%) scale(1);
+  transition:transform 1.2s cubic-bezier(.2,.85,.25,1), opacity .45s ease;
+}
+#scene-env.e3b #carte-sortie{
+  opacity:0;transform:translate(-50%,-54%) scale(3.2);
+  transition:transform .95s cubic-bezier(.55,.04,.45,1), opacity .6s ease .3s;
+}
+
 /* consigne */
 .env-consigne{
   position:absolute;left:0;right:0;bottom:34px;text-align:center;z-index:4;
@@ -201,7 +229,7 @@ body.ouverte{cursor:pointer}
   letter-spacing:.3em;text-transform:uppercase;color:#6F5F3D;white-space:nowrap;
   animation:pulse-i 2.8s ease-in-out infinite;transition:opacity .4s;
 }
-#scene-env.e1 .env-consigne{opacity:0}
+#scene-env.e1 .env-consigne{opacity:0;animation:none}
 
 /* poussière dorée */
 .poussiere{
@@ -246,7 +274,7 @@ body.ouverte #progression{opacity:1}
 .page.courante{opacity:1;visibility:visible;transform:none;transition:opacity .75s ease, transform .75s ease}
 .page.fond-creme2{background:var(--creme-2)}
 .page .el{opacity:0;transform:translateY(18px);transition:opacity .9s ease,transform .9s ease}
-.page.courante .el{opacity:1;transform:none}
+body.ouverte .page.courante .el{opacity:1;transform:none}
 .page.courante .e1{transition-delay:.2s}.page.courante .e2{transition-delay:.4s}
 .page.courante .e3{transition-delay:.6s}.page.courante .e4{transition-delay:.8s}.page.courante .e5{transition-delay:1s}
 
@@ -581,6 +609,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     <div class="fleurs-rabat" aria-hidden="true"></div>
   </div>
 
+  <div id="carte-sortie" aria-hidden="true"><b>L&amp;K</b><i>12.09.2026</i></div>
+
   <div class="cachet" id="cachet" aria-hidden="true"><span>L&amp;K</span></div>
   <div class="env-consigne">Touchez le sceau</div>
 </div>
@@ -786,7 +816,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     }
   }
 
-  /* chorégraphie : sceau -> rabat -> poussière dorée -> page d'accueil */
+  /* chorégraphie : sceau -> rabat -> la carte sort et s'approche -> couverture en cascade */
   function ouvrirEnveloppe(){
     if (ouverte) return;
     ouverte = true;
@@ -801,13 +831,18 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     sceneEnv.classList.add('e1');                                             /* le sceau fond */
     setTimeout(function(){ sceneEnv.classList.add('e2'); }, 320);             /* le rabat s'ouvre sur la doublure */
     setTimeout(function(){ sceneEnv.classList.add('derriere'); }, 950);
-    setTimeout(function(){ poussiere(r.left + r.width / 2, r.top); }, 1100);  /* poussière dorée au déploiement du rabat */
-    setTimeout(function(){                                                    /* fondu vers l'accueil */
+    setTimeout(function(){                                                    /* la carte sort de l'enveloppe */
+      sceneEnv.classList.add('e3');
+      poussiere(r.left + r.width / 2, r.top);
+    }, 1000);
+    setTimeout(function(){ sceneEnv.classList.add('e3b'); }, 2300);           /* la carte s'approche du lecteur */
+    setTimeout(function(){                                                    /* fondu vers la couverture, textes en cascade */
       sceneEnv.classList.add('e4');
       document.body.classList.add('ouverte');
       pages[0].focus({preventScroll: true});
-    }, 1900);
-    setTimeout(function(){ sceneEnv.style.display = 'none'; }, 3200);
+      coucouChien();
+    }, 2650);
+    setTimeout(function(){ sceneEnv.style.display = 'none'; }, 3950);
   }
   sceneEnv.addEventListener('click', function(e){ e.stopPropagation(); ouvrirEnveloppe(); });
   sceneEnv.addEventListener('keydown', function(e){
