@@ -488,8 +488,18 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   .page{padding:64px 26px 66px}
 }
 @media (prefers-reduced-motion: reduce){
-  *{animation-duration:.01ms!important;transition-duration:.2s!important;transition-delay:0s!important}
+  *{animation-duration:.01ms!important;transition-duration:.25s!important;transition-delay:0s!important}
   .img-couple{animation:none}
+  /* fondu croisé conservé : sans le délai de visibilité, la page sortante disparaissait net */
+  .page{transform:none!important;transition:opacity .5s ease, visibility 0s .5s!important}
+  .page.courante{transition:opacity .5s ease!important}
+  .page .el{transform:none!important}
+  #scene-env{transition:opacity .7s ease .1s, visibility 0s .9s!important}
+  #chien{opacity:0;transition:opacity .45s ease!important}
+  #chien.coucou-doux{opacity:1;transform:translateY(32%) rotate(3deg)!important}
+  #chien.haut-droit.coucou-doux{transform:translateY(-32%) rotate(182deg)!important}
+  #chien.milieu-gauche.coucou-doux{transform:translateX(-30%) rotate(90deg)!important}
+  #chien.milieu-droit.coucou-doux{transform:translateX(30%) rotate(-90deg)!important}
 }
 </style>
 </head>
@@ -803,6 +813,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       document.body.classList.add('ouverte');
       pages[0].focus({preventScroll: true});
       setTimeout(function(){ sceneEnv.style.display = 'none'; }, 300);
+      setTimeout(coucouChien, 500);
       return;
     }
     cachetEl.classList.add('appui');                                          /* pression du doigt */
@@ -824,15 +835,21 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   });
   /* --- navigation story --- */
   var cotes = ['milieu-gauche','haut-droit','bas-gauche','milieu-droit'];
+  var chienTimer = null;
   function coucouChien(){
-    if (reduit) return;
-    chien.classList.remove('coucou','milieu-gauche','haut-droit','bas-gauche','milieu-droit');
+    chien.classList.remove('coucou','coucou-doux','milieu-gauche','haut-droit','bas-gauche','milieu-droit');
     var choix;
     do { choix = cotes[Math.floor(Math.random() * cotes.length)]; } while (choix === dernierCote);
     dernierCote = choix;
     chien.classList.add(choix);
     void chien.offsetWidth;
-    chien.classList.add('coucou');
+    if (reduit){                                                              /* fondu sans glissade */
+      chien.classList.add('coucou-doux');
+      clearTimeout(chienTimer);
+      chienTimer = setTimeout(function(){ chien.classList.remove('coucou-doux'); }, 2400);
+    } else {
+      chien.classList.add('coucou');
+    }
   }
 
   function aller(n){
