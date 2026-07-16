@@ -753,7 +753,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
         <button class="btn btn-plein-or btn-rsvp" type="button" data-dest="lounis">À Lounis ✦</button>
         <button class="btn btn-plein-or btn-rsvp" type="button" data-dest="kenza">À Kenza ✦</button>
       </div>
-      <p class="note-form">Votre réponse nous parviendra par WhatsApp.</p>
+      <p class="note-form"><span class="l1">Votre réponse nous parviendra par WhatsApp.</span><br>
+      <span class="autres-canaux">ou&nbsp;: <a href="#" id="btnSms">envoyer par SMS</a> · <a href="#" id="btnCopie" role="button">copier le message</a></span></p>
     </div>
   </div>
   </div>
@@ -960,10 +961,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   });
   majPresence();
 
-  /* --- RSVP : formulaire -> WhatsApp --- */
-  Array.prototype.forEach.call(document.querySelectorAll('.btn-rsvp'), function(btnDest){
-  btnDest.addEventListener('click', function(e){
-    e.preventDefault();
+  /* --- RSVP : un même message, trois canaux (WhatsApp, SMS, copie) --- */
+  function composerRsvp(){
     var nom = document.getElementById('f-nom').value.trim() || '(nom non renseigné)';
     var msg = document.getElementById('f-msg').value.trim();
     function rep(n){
@@ -982,10 +981,36 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       texte += '\nNombre de personnes : ' + nbp;
     }
     if (msg) texte += '\nMessage : ' + msg;
-    var url = 'https://wa.me/' + NUMEROS_WHATSAPP[btnDest.getAttribute('data-dest')] + '?text=' + encodeURIComponent(texte);
-    var w = window.open(url, '_blank');
-    if (!w) location.href = url;
+    return texte;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.btn-rsvp'), function(btnDest){
+    btnDest.addEventListener('click', function(e){
+      e.preventDefault();
+      var url = 'https://wa.me/' + NUMEROS_WHATSAPP[btnDest.getAttribute('data-dest')] + '?text=' + encodeURIComponent(composerRsvp());
+      var w = window.open(url, '_blank');
+      if (!w) location.href = url;
+    });
   });
+  document.getElementById('btnSms').addEventListener('click', function(e){
+    e.preventDefault();                                                       /* ?&body= : forme tolérée par iOS ET Android */
+    location.href = 'sms:+' + NUMEROS_WHATSAPP.lounis + '?&body=' + encodeURIComponent(composerRsvp());
+  });
+  document.getElementById('btnCopie').addEventListener('click', function(e){
+    e.preventDefault();
+    var el = e.currentTarget;
+    var texte = composerRsvp();
+    function fini(){
+      el.textContent = 'copié \u2713';
+      setTimeout(function(){ el.textContent = 'copier le message'; }, 2200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(texte).then(fini, fini); }
+    else {
+      var ta = document.createElement('textarea');
+      ta.value = texte; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (err) {}
+      ta.remove(); fini();
+    }
   });
 
 })();
@@ -1042,17 +1067,19 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 }
 /* le formulaire se compacte selon la hauteur de la carte : jamais de défilement nécessaire */
 @container (max-height:880px){
-  .page-form .defiler{padding:40px 22px 46px}
-  .page-form .formulaire{margin-top:10px}
-  .page-form .champ{margin-bottom:14px}
+  .page-form .defiler{padding:38px 22px 36px}
+  .page-form .formulaire{margin-top:10px;padding:20px 18px}
+  .page-form .champ{margin-bottom:13px}
 }
 @container (max-height:800px){
-  .page-form .defiler{padding:26px 22px 24px}
+  .page-form .defiler{padding:24px 22px 20px}
   .page-form .formulaire{margin-top:8px;padding:14px 16px}
   .page-form .champ{margin-bottom:10px}
   .page-form textarea{height:30px}
   .page-form .env-form{margin-top:8px}
   .page-form .note-form{margin-top:7px;font-size:12.5px}
+  .page-form .note-form .l1{display:none}
+  .page-form .note-form br{display:none}
   .page-epilogue .actions{margin-top:14px!important}
   .page-epilogue .brin-haut{margin-top:6px!important;transform:scale(.9)}
   .page-epilogue .compte{margin-top:8px}
@@ -1076,6 +1103,14 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   .page-epilogue .signature{margin-top:10px}
   .page-epilogue .italique{margin-top:12px!important}
   .page-epilogue .btn{padding-top:8px;padding-bottom:8px}
+}
+/* autres canaux de réponse, discrets sous les boutons */
+.autres-canaux{display:inline-block;margin-top:4px}
+.autres-canaux a{color:var(--or-t);font-style:normal;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}
+@container (max-height:700px){
+  .page-form .note-form .l1{display:none}
+  .page-form .note-form br{display:none}
+  .autres-canaux{margin-top:0}
 }
 /* deux destinataires, côte à côte */
 .choix-dest{display:flex;gap:10px;justify-content:center}
