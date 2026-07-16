@@ -721,7 +721,10 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       <textarea id="f-msg" rows="2"></textarea>
     </div>
     <div class="env-form">
-      <button class="btn btn-plein-or" id="btnRsvp" type="button">Envoyer ma réponse ✦</button>
+      <div class="choix-dest">
+        <button class="btn btn-plein-or btn-rsvp" type="button" data-dest="lounis">À Lounis ✦</button>
+        <button class="btn btn-plein-or btn-rsvp" type="button" data-dest="kenza">À Kenza ✦</button>
+      </div>
       <p class="note-form">Votre réponse nous parviendra par WhatsApp.</p>
     </div>
   </div>
@@ -760,7 +763,10 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 <script>
 (function(){
   /* ====== À PERSONNALISER ====== */
-  var NUMERO_WHATSAPP = ['33', '7', '51', '55', '42', '58'].join(''); /* format international, sans + ni espaces (segmenté contre les robots collecteurs) */
+  var NUMEROS_WHATSAPP = {                                                  /* format international, sans + ni espaces (segmentés contre les robots collecteurs) */
+    lounis: ['33', '7', '51', '55', '42', '58'].join(''),
+    kenza: ['33', '7', '67', '09', '49', '56'].join('')
+  };
 
   var reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var sceneEnv = document.getElementById('scene-env');
@@ -951,7 +957,8 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   majPresence();
 
   /* --- RSVP : formulaire -> WhatsApp --- */
-  document.getElementById('btnRsvp').addEventListener('click', function(e){
+  Array.prototype.forEach.call(document.querySelectorAll('.btn-rsvp'), function(btnDest){
+  btnDest.addEventListener('click', function(e){
     e.preventDefault();
     var nom = document.getElementById('f-nom').value.trim() || '(nom non renseigné)';
     var msg = document.getElementById('f-msg').value.trim();
@@ -971,11 +978,12 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       texte += '\nNombre de personnes : ' + nbp;
     }
     if (msg) texte += '\nMessage : ' + msg;
-    var url = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + encodeURIComponent(texte);
+    var url = 'https://wa.me/' + NUMEROS_WHATSAPP[btnDest.getAttribute('data-dest')] + '?text=' + encodeURIComponent(texte);
     var w = window.open(url, '_blank');
     /* au retour de WhatsApp, l'invité retrouve l'épilogue, pas le formulaire */
     if (!w){ aller(pages.length - 1); location.href = url; }
     else { setTimeout(function(){ aller(pages.length - 1); }, 450); }
+  });
   });
 
 })();
@@ -1053,6 +1061,9 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   .page-form textarea{height:26px}
   .page-form .chapitre{margin-bottom:2px}
 }
+/* deux destinataires, côte à côte */
+.choix-dest{display:flex;gap:10px;justify-content:center}
+.choix-dest .btn{flex:1;min-width:0}
 /* nombre de personnes : étiquette et champ sur une même ligne */
 #champ-nombre{display:flex;align-items:baseline;gap:12px}
 #champ-nombre label{margin:0;white-space:nowrap}
