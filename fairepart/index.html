@@ -235,13 +235,14 @@ body.ouverte #progression{opacity:1}
 /* ============ pages ============ */
 .page{
   position:fixed;inset:0;
+  pointer-events:none;                                   /* seule la page courante reçoit les clics */
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:72px 30px 78px;
   opacity:0;visibility:hidden;transform:translateY(14px) scale(1.012);
   transition:opacity .75s ease, transform .75s ease, visibility 0s .75s;
   background:var(--creme);
 }
-.page.courante{opacity:1;visibility:visible;transform:none;transition:opacity .75s ease, transform .75s ease}
+.page.courante{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity .75s ease, transform .75s ease}
 .page.fond-creme2{background:var(--creme-2)}
 .page .el{opacity:0;transform:translateY(18px);transition:opacity .9s ease,transform .9s ease}
 body.ouverte .page.courante .el{opacity:1;transform:none}
@@ -387,7 +388,7 @@ h1.noms .et{
 .page-form .defiler{
   position:relative;min-height:100%;
   display:flex;flex-direction:column;align-items:center;
-  text-align:center;padding:92px 26px 96px;
+  text-align:center;padding:60px 24px 60px;
 }
 .formulaire{
   width:100%;max-width:380px;text-align:left;margin-top:16px;cursor:auto;
@@ -682,20 +683,9 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 <!-- ========== 6. ÉPILOGUE + RSVP ========== -->
 <section class="page page-form fond-creme2">
   <div class="defiler">
-  <div class="chapitre el e1">Épilogue</div>
-  <h2 class="el e1 gaufre" style="font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(38px,9.4cqw,52px);line-height:1.2">À très vite</h2>
-  <svg class="el e1" width="150" height="18" viewBox="0 0 150 18" aria-hidden="true" style="margin-top:4px"><use href="#sep-anneaux"/></svg>
-  <div class="brin-haut el e1" aria-hidden="true" style="margin-top:12px;margin-bottom:0"></div>
-  <div class="compte el e2" id="compte" role="group" aria-label="Compte à rebours avant la cérémonie">
-    <div class="bloc"><b id="cj">—</b><i>jours</i></div>
-    <div class="bloc"><b id="ch">—</b><i>heures</i></div>
-    <div class="bloc"><b id="cm">—</b><i>min</i></div>
-    <div class="bloc"><b id="cs">—</b><i>sec</i></div>
-  </div>
-  <p class="italique el e2" id="compte-lbl" style="margin-top:8px;font-size:14.5px">avant notre premier « oui »</p>
-
-  <h3 class="el e3" style="font-weight:500;font-size:clamp(20px,5.4cqw,25px);letter-spacing:.03em;margin-top:30px">Confirmez votre présence</h3>
-  <p class="italique el e3" style="margin-top:6px;font-size:14.5px">Votre présence sera notre plus beau cadeau.</p>
+  <div class="chapitre el e1">R.S.V.P.</div>
+  <h2 class="titre el e1">Confirmez votre présence</h2>
+  <p class="italique el e2" style="margin-top:6px;font-size:14.5px">Votre présence sera notre plus beau cadeau.</p>
   <div class="formulaire el e3">
     <div class="champ">
       <label for="f-nom">Votre nom</label>
@@ -735,16 +725,31 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       <p class="note-form">Votre réponse nous parviendra par WhatsApp.</p>
     </div>
   </div>
-  <div class="actions el e4" style="margin-top:34px">
+  </div>
+</section>
+
+<!-- ========== 7. ÉPILOGUE ========== -->
+<section class="page">
+  <div class="chapitre el e1">Épilogue</div>
+  <h2 class="el e1 gaufre" style="font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(38px,9.4cqw,52px);line-height:1.2">À très vite</h2>
+  <svg class="el e1" width="150" height="18" viewBox="0 0 150 18" aria-hidden="true" style="margin-top:4px"><use href="#sep-anneaux"/></svg>
+  <div class="brin-haut el e2" aria-hidden="true" style="margin-top:12px;margin-bottom:0"></div>
+  <div class="compte el e2" id="compte" role="group" aria-label="Compte à rebours avant la cérémonie">
+    <div class="bloc"><b id="cj">—</b><i>jours</i></div>
+    <div class="bloc"><b id="ch">—</b><i>heures</i></div>
+    <div class="bloc"><b id="cm">—</b><i>min</i></div>
+    <div class="bloc"><b id="cs">—</b><i>sec</i></div>
+  </div>
+  <p class="italique el e2" id="compte-lbl" style="margin-top:8px;font-size:14.5px">avant notre premier « oui »</p>
+  <div class="actions el e3" style="margin-top:34px">
     <a class="btn btn-plein-or" id="btnCal" href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FLK%2F%2FMariage%2F%2FFR%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVTIMEZONE%0D%0ATZID%3AEurope%2FParis%0D%0ABEGIN%3ADAYLIGHT%0D%0ATZOFFSETFROM%3A%2B0100%0D%0ATZOFFSETTO%3A%2B0200%0D%0ATZNAME%3ACEST%0D%0ADTSTART%3A19700329T020000%0D%0ARRULE%3AFREQ%3DYEARLY%3BBYMONTH%3D3%3BBYDAY%3D-1SU%0D%0AEND%3ADAYLIGHT%0D%0ABEGIN%3ASTANDARD%0D%0ATZOFFSETFROM%3A%2B0200%0D%0ATZOFFSETTO%3A%2B0100%0D%0ATZNAME%3ACET%0D%0ADTSTART%3A19701025T030000%0D%0ARRULE%3AFREQ%3DYEARLY%3BBYMONTH%3D10%3BBYDAY%3D-1SU%0D%0AEND%3ASTANDARD%0D%0AEND%3AVTIMEZONE%0D%0ABEGIN%3AVTIMEZONE%0D%0ATZID%3AAfrica%2FAlgiers%0D%0ABEGIN%3ASTANDARD%0D%0ATZOFFSETFROM%3A%2B0100%0D%0ATZOFFSETTO%3A%2B0100%0D%0ATZNAME%3ACET%0D%0ADTSTART%3A19700101T000000%0D%0AEND%3ASTANDARD%0D%0AEND%3AVTIMEZONE%0D%0ABEGIN%3AVEVENT%0D%0AUID%3Alk-2026-puteaux%40invitation%0D%0ADTSTAMP%3A20260715T120000Z%0D%0ADTSTART%3BTZID%3DEurope%2FParis%3A20260912T140000%0D%0ADTEND%3BTZID%3DEurope%2FParis%3A20260912T160000%0D%0ASUMMARY%3AMariage%20Lounis%20%26%20Kenza%20%E2%80%94%20C%C3%A9r%C3%A9monie%20civile%0D%0ALOCATION%3AMairie%20de%20Puteaux%5C%2C%20131%20rue%20de%20la%20R%C3%A9publique%5C%2C%2092800%20Puteaux%0D%0AEND%3AVEVENT%0D%0ABEGIN%3AVEVENT%0D%0AUID%3Alk-2026-sidifredj%40invitation%0D%0ADTSTAMP%3A20260715T120000Z%0D%0ADTSTART%3BTZID%3DAfrica%2FAlgiers%3A20261002T140000%0D%0ADTEND%3BTZID%3DAfrica%2FAlgiers%3A20261002T230000%0D%0ASUMMARY%3AMariage%20Lounis%20%26%20Kenza%20%E2%80%94%20F%C3%AAte%20%C3%A0%20Sidi%20Fredj%0D%0ALOCATION%3ASalle%20des%20f%C3%AAtes%20Dar%20El%20Ra%C3%AFs%5C%2C%20Sidi%20Fredj%5C%2C%20Alger%0D%0AEND%3AVEVENT%0D%0ABEGIN%3AVEVENT%0D%0AUID%3Alk-2026-tiziouzou%40invitation%0D%0ADTSTAMP%3A20260715T120000Z%0D%0ADTSTART%3BTZID%3DAfrica%2FAlgiers%3A20261003T170000%0D%0ADTEND%3BTZID%3DAfrica%2FAlgiers%3A20261003T230000%0D%0ASUMMARY%3AMariage%20Lounis%20%26%20Kenza%20%E2%80%94%20F%C3%AAte%20%C3%A0%20Tizi-Ouzou%0D%0ALOCATION%3ASalle%20Sa%C3%AFb%5C%2C%20Tizi-Ouzou%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR" download="mariage-lounis-kenza.ics">Ajouter les 3 dates au calendrier</a>
   </div>
-  <div class="actions el e4" style="margin-top:10px">
+  <div class="actions el e3" style="margin-top:10px">
     <a class="btn btn-vide" href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Puteaux+131+rue+de+la+R%C3%A9publique+92800+Puteaux" target="_blank" rel="noopener">Puteaux</a>
     <a class="btn btn-vide" href="https://www.google.com/maps/search/?api=1&query=Salle+des+fetes+Dar+El+Rais+Sidi+Fredj+Alger" target="_blank" rel="noopener">Sidi Fredj</a>
     <a class="btn btn-vide" href="https://www.google.com/maps/search/?api=1&query=Salle+Saib+Tizi+Ouzou" target="_blank" rel="noopener">Tizi-Ouzou</a>
   </div>
-  <p class="signature el e5">— Lounis &amp; Kenza</p>
-  </div>
+  <p class="signature el e4">— Lounis &amp; Kenza</p>
 </section>
 
 <div class="sr-live" id="annonce-sr" aria-live="polite"></div>
@@ -1023,6 +1028,33 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       0 0 0 1px rgba(166,138,82,.30);
   }
 }
+/* le formulaire se compacte selon la hauteur de la carte : jamais de défilement nécessaire */
+@container (max-height:880px){
+  .page-form .defiler{padding:40px 22px 46px}
+  .page-form .formulaire{margin-top:10px}
+  .page-form .champ{margin-bottom:14px}
+}
+@container (max-height:800px){
+  .page-form .defiler{padding:26px 22px 24px}
+  .page-form .formulaire{margin-top:8px;padding:14px 16px}
+  .page-form .champ{margin-bottom:10px}
+  .page-form textarea{height:30px}
+  .page-form .env-form{margin-top:8px}
+  .page-form .note-form{margin-top:7px;font-size:12.5px}
+}
+@container (max-height:700px){
+  .page-form .defiler{padding:16px 20px 18px}
+  .page-form .titre{font-size:clamp(24px,6.4cqw,32px)}
+  .page-form .formulaire{padding:10px 14px}
+  .page-form .champ{margin-bottom:7px}
+  .page-form .champ label,.page-form .champ .etiquette{font-size:16px}
+  .page-form textarea{height:26px}
+  .page-form .chapitre{margin-bottom:2px}
+}
+/* nombre de personnes : étiquette et champ sur une même ligne */
+#champ-nombre{display:flex;align-items:baseline;gap:12px}
+#champ-nombre label{margin:0;white-space:nowrap}
+#champ-nombre input{width:76px;text-align:center}
 </style>
 </body>
 </html>
