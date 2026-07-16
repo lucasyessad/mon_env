@@ -495,11 +495,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   .page.courante{transition:opacity .5s ease!important}
   .page .el{transform:none!important}
   #scene-env{transition:opacity .7s ease .1s, visibility 0s .9s!important}
-  #chien{opacity:0;transition:opacity .45s ease!important}
-  #chien.coucou-doux{opacity:1;transform:translateY(32%) rotate(3deg)!important}
-  #chien.haut-droit.coucou-doux{transform:translateY(-32%) rotate(182deg)!important}
-  #chien.milieu-gauche.coucou-doux{transform:translateX(-30%) rotate(90deg)!important}
-  #chien.milieu-droit.coucou-doux{transform:translateX(30%) rotate(-90deg)!important}
+  #chien.coucou{animation-duration:1.8s!important}
 }
 </style>
 </head>
@@ -835,21 +831,14 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   });
   /* --- navigation story --- */
   var cotes = ['milieu-gauche','haut-droit','bas-gauche','milieu-droit'];
-  var chienTimer = null;
   function coucouChien(){
-    chien.classList.remove('coucou','coucou-doux','milieu-gauche','haut-droit','bas-gauche','milieu-droit');
+    chien.classList.remove('coucou','milieu-gauche','haut-droit','bas-gauche','milieu-droit');
     var choix;
     do { choix = cotes[Math.floor(Math.random() * cotes.length)]; } while (choix === dernierCote);
     dernierCote = choix;
     chien.classList.add(choix);
     void chien.offsetWidth;
-    if (reduit){                                                              /* fondu sans glissade */
-      chien.classList.add('coucou-doux');
-      clearTimeout(chienTimer);
-      chienTimer = setTimeout(function(){ chien.classList.remove('coucou-doux'); }, 2400);
-    } else {
-      chien.classList.add('coucou');
-    }
+    chien.classList.add('coucou');
   }
 
   function aller(n){
