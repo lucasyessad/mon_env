@@ -973,7 +973,9 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     if (msg) texte += '\nMessage : ' + msg;
     var url = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + encodeURIComponent(texte);
     var w = window.open(url, '_blank');
-    if (!w) location.href = url;
+    /* au retour de WhatsApp, l'invité retrouve l'épilogue, pas le formulaire */
+    if (!w){ aller(pages.length - 1); location.href = url; }
+    else { setTimeout(function(){ aller(pages.length - 1); }, 450); }
   });
 
 })();
