@@ -681,7 +681,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
 </section>
 
 <!-- ========== 6. ÉPILOGUE ========== -->
-<section class="page">
+<section class="page page-epilogue">
   <div class="chapitre el e1">Épilogue</div>
   <h2 class="el e1 gaufre" style="font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(38px,9.4cqw,52px);line-height:1.2">À très vite</h2>
   <svg class="el e1" width="150" height="18" viewBox="0 0 150 18" aria-hidden="true" style="margin-top:4px"><use href="#sep-anneaux"/></svg>
@@ -702,8 +702,9 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     <a class="btn btn-vide" href="https://www.google.com/maps/search/?api=1&query=Salle+Saib+Tizi+Ouzou" target="_blank" rel="noopener">Tizi-Ouzou</a>
   </div>
   <p class="signature el e4">— Lounis &amp; Kenza</p>
-  <p class="el e4" style="margin-top:30px">
-    <span style="display:inline-block;font-family:'Jost',sans-serif;font-weight:400;font-size:11px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--or-t);animation:pulse-i 2.6s ease-in-out infinite">Touchez pour confirmer votre présence&nbsp;→</span>
+  <p class="italique el e4" style="margin-top:26px;font-size:15.5px;max-width:30ch;line-height:1.6">Pour finir, dites-nous si vous serez des nôtres&nbsp;: il ne reste qu'à confirmer votre présence.</p>
+  <p class="el e4" style="margin-top:10px">
+    <span style="display:inline-block;font-family:'Jost',sans-serif;font-weight:400;font-size:11px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--or-t);animation:pulse-i 2.6s ease-in-out infinite">Touchez pour continuer&nbsp;→</span>
   </p>
 </section>
 
@@ -1061,6 +1062,14 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
   .page-form .champ label,.page-form .champ .etiquette{font-size:16px}
   .page-form textarea{height:26px}
   .page-form .chapitre{margin-bottom:2px}
+}
+/* petits écrans : l'épilogue se resserre pour tenir sans défilement */
+@container (max-height:700px){
+  .page-epilogue .brin-haut{margin-top:4px!important;transform:scale(.82)}
+  .page-epilogue .compte{margin-top:6px}
+  .page-epilogue .actions{margin-top:12px!important}
+  .page-epilogue .signature{margin-top:10px}
+  .page-epilogue .italique{margin-top:12px!important}
 }
 /* deux destinataires, côte à côte */
 .choix-dest{display:flex;gap:10px;justify-content:center}
