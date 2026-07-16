@@ -115,13 +115,6 @@ body.ouverte{cursor:pointer}
 /* plis en V du corps, suggérés par des ombres diagonales */
 .env-plis{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.8}
 .env-plis svg{width:100%;height:100%;display:block}
-/* poche : le bas de l'enveloppe passe DEVANT la lettre, qui en sort réellement */
-#poche{
-  position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:radial-gradient(140% 100% at 50% -10%, #FBF7EC 0%, #F3EDDC 58%, #EDE5CF 100%);
-  clip-path:polygon(0 56.2%, 100% 56.2%, 100% 100%, 0 100%);
-}
-#poche svg{position:absolute;inset:0;width:100%;height:100%;opacity:.8}
 
 /* photos de bouquets détourées, patinées pour se fondre dans le papier */
 .fleurs-rabat{
@@ -192,48 +185,11 @@ body.ouverte{cursor:pointer}
   transform:translateY(-3px);
 }
 .cachet.appui{animation:none;transform:translate(-50%,-50%) scale(.93);transition:transform .09s ease}
-#scene-env.e1 .cachet:not(.moitie){animation:none;opacity:0;transition:opacity .06s}
-/* les deux moitiés du sceau, découpées le long d'une fissure irrégulière */
-.cachet.moitie{display:none;animation:none;transition:none;cursor:default;z-index:6}
-.cachet.moitie.g{clip-path:polygon(0 0,54% 0,46% 26%,53% 52%,45% 76%,51% 100%,0 100%)}
-.cachet.moitie.d{clip-path:polygon(54% 0,100% 0,100% 100%,51% 100%,45% 76%,53% 52%,46% 26%)}
-#scene-env.e1 .cachet.moitie{display:flex}
-#scene-env.e1 .cachet.moitie.g{animation:brise-g .55s cubic-bezier(.3,.1,.6,1) forwards}
-#scene-env.e1 .cachet.moitie.d{animation:brise-d .6s cubic-bezier(.3,.1,.6,1) forwards .03s}
-@keyframes brise-g{
-  0%{transform:translate(-50%,-50%);opacity:1}
-  45%{opacity:1}
-  100%{transform:translate(calc(-50% - 20px),calc(-50% + 40px)) rotate(-10deg);opacity:0}
-}
-@keyframes brise-d{
-  0%{transform:translate(-50%,-50%);opacity:1}
-  45%{opacity:1}
-  100%{transform:translate(calc(-50% + 18px),calc(-50% + 44px)) rotate(9deg);opacity:0}
-}
-
-/* carte monogrammée qui sort de l'enveloppe */
-#carte-sortie{
-  position:absolute;left:50%;top:50%;z-index:2;
-  width:min(62vw,290px);aspect-ratio:29/40;
-  transform:translate(-50%,68%);opacity:0;pointer-events:none;
-  background:linear-gradient(178deg,#FFFEF9,#FBF6E9);
-  border:1px solid rgba(194,165,103,.55);
-  box-shadow:0 22px 52px rgba(100,84,52,.22), 0 4px 12px rgba(100,84,52,.1);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
-  overflow:hidden;
-}
-#carte-sortie::before{content:"";position:absolute;inset:8px;border:1px solid rgba(194,165,103,.32)}
-#carte-sortie b{
-  font-family:'Pinyon Script',cursive;font-weight:400;font-size:56px;line-height:1;
-  color:#96803F;text-shadow:0 1.5px 1px rgba(255,255,255,.9), 0 -1px 1px rgba(105,85,40,.3);
-}
-#scene-env.e3 #carte-sortie{
-  opacity:1;transform:translate(-50%,-62%);
-  transition:transform 1.4s cubic-bezier(.65,.05,.25,1), opacity .3s ease;
-}
-#scene-env.e4 #carte-sortie{
-  transform:translate(-50%,-68%) scale(1.04);
-  transition:transform 1.3s ease;
+#scene-env.e1 .cachet{
+  animation:none;
+  transform:translate(-50%,-50%) scale(.42) rotate(10deg);
+  opacity:0;filter:blur(3px);
+  transition:transform .55s cubic-bezier(.6,-.2,.7,1), opacity .5s ease, filter .55s ease;
 }
 
 /* consigne */
@@ -592,14 +548,6 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     </svg>
   </div>
 
-  <!-- poche : le bas de l'enveloppe, devant la lettre -->
-  <div id="poche" aria-hidden="true">
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-      <polygon points="0,56 50,100 0,100" fill="url(#pli-g)"/>
-      <polygon points="100,56 50,100 100,100" fill="url(#pli-d)"/>
-    </svg>
-  </div>
-
   <!-- texte gaufré dans le papier -->
   <div class="env-corps-texte" aria-hidden="true">
     <div style="height:clamp(64px,18vw,86px)"></div>
@@ -630,14 +578,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     <div class="fleurs-rabat" aria-hidden="true"></div>
   </div>
 
-  <div id="carte-sortie" aria-hidden="true">
-    <b>L&amp;K</b>
-    <svg width="112" height="14" viewBox="0 0 150 18" aria-hidden="true"><use href="#sep-anneaux"/></svg>
-  </div>
-
   <div class="cachet" id="cachet" aria-hidden="true"><span>L&amp;K</span></div>
-  <div class="cachet moitie g" aria-hidden="true"><span>L&amp;K</span></div>
-  <div class="cachet moitie d" aria-hidden="true"><span>L&amp;K</span></div>
   <div class="env-consigne">Touchez le sceau</div>
 </div>
 
@@ -850,7 +791,7 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
     }
   }
 
-  /* chorégraphie : sceau -> rabat -> la carte sort et s'approche -> couverture en cascade */
+  /* chorégraphie : sceau -> rabat -> poussière -> couverture en cascade */
   function ouvrirEnveloppe(){
     if (ouverte) return;
     ouverte = true;
@@ -863,18 +804,17 @@ body.ouverte #indice.cache{opacity:0;animation:none;visibility:hidden}
       return;
     }
     cachetEl.classList.add('appui');                                          /* pression du doigt */
-    setTimeout(function(){ sceneEnv.classList.add('e1'); }, 100);             /* le sceau se brise */
-    setTimeout(function(){ poussiere(r.left + r.width / 2, r.top + r.height / 2); }, 200);
-    setTimeout(function(){ sceneEnv.classList.add('e2'); }, 350);             /* le rabat s'ouvre... */
-    setTimeout(function(){ sceneEnv.classList.add('e3'); }, 900);             /* ...et la lettre le suit, même geste, même courbe */
-    setTimeout(function(){ sceneEnv.classList.add('derriere'); }, 1000);
-    setTimeout(function(){                                                    /* fondu continu vers la couverture */
+    setTimeout(function(){ sceneEnv.classList.add('e1'); }, 100);             /* le sceau fond */
+    setTimeout(function(){ poussiere(r.left + r.width / 2, r.top + r.height / 2); }, 220);
+    setTimeout(function(){ sceneEnv.classList.add('e2'); }, 380);             /* le rabat se déploie */
+    setTimeout(function(){ sceneEnv.classList.add('derriere'); }, 1030);
+    setTimeout(function(){                                                    /* fondu vers la couverture, textes en cascade */
       sceneEnv.classList.add('e4');
       document.body.classList.add('ouverte');
       pages[0].focus({preventScroll: true});
       coucouChien();
-    }, 2350);
-    setTimeout(function(){ sceneEnv.style.display = 'none'; }, 3600);
+    }, 1900);
+    setTimeout(function(){ sceneEnv.style.display = 'none'; }, 3200);
   }
   sceneEnv.addEventListener('click', function(e){ e.stopPropagation(); ouvrirEnveloppe(); });
   sceneEnv.addEventListener('keydown', function(e){
